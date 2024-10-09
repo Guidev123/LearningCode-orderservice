@@ -1,4 +1,4 @@
-﻿namespace OrderService.API.Application.Responses
+﻿namespace OrderService.Application.Responses
 {
     public class Response
     {

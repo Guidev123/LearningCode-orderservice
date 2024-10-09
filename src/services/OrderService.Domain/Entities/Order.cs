@@ -9,7 +9,7 @@ namespace OrderService.Domain.Entities
 {
     public class Order : Entity
     {
-        public Order(string number, string userId, string? externalReference, Guid? voucherId, Guid productId)
+        public Order(string number, Guid userId, string? externalReference, Guid? voucherId, Guid productId)
         {
             Number = number;
             UserId = userId;
@@ -23,7 +23,7 @@ namespace OrderService.Domain.Entities
         }
 
         public string Number { get; private set; }
-        public string UserId { get; private set; }
+        public Guid UserId { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
         public string? ExternalReference { get; private set; }
