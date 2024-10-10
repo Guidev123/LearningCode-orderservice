@@ -1,11 +1,12 @@
 ﻿using MediatR;
 using OrderService.Application.Responses;
+using OrderService.Domain.Entities;
 
 namespace OrderService.Application.Commands.CreateOrder
 {
-    public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Response>
+    public class CreateOrderHandler : IRequestHandler<CreateOrderCommand, Response<Order>>
     {
-        public Task<Response> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
+        public Task<Response<Order>> Handle(CreateOrderCommand request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

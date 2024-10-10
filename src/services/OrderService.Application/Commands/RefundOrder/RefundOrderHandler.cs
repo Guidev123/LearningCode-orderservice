@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using OrderService.Application.Responses;
+using OrderService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.Commands.RefundOrder
 {
-    public class RefundOrderHandler : IRequestHandler<RefundOrderCommand, Response>
+    public class RefundOrderHandler : IRequestHandler<RefundOrderCommand, Response<Order>>
     {
-        public Task<Response> Handle(RefundOrderCommand request, CancellationToken cancellationToken)
+        public Task<Response<Order>> Handle(RefundOrderCommand request, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using OrderService.Application.Responses;
+using OrderService.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +9,8 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.Queries.GetVoucherByNumber
 {
-    public class GetVoucherByNumberQuery : IRequest<Response>
+    public class GetVoucherByNumberQuery : IRequest<Response<Voucher>>
     {
-        public Guid UserId { get; set; }
         public string Number { get; set; } = string.Empty;
     }
 }

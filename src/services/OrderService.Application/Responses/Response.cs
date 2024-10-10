@@ -1,28 +1,40 @@
-﻿namespace OrderService.Application.Responses
+﻿using System.Text.Json.Serialization;
+
+namespace OrderService.Application.Responses
 {
-    public class Response
+    public class Response<TData>
     {
-        public Response(bool isSuccess = true, string message = "")
-        {
-            IsSuccess = isSuccess;
-            Message = message;
-        }
+        private readonly int _code;
+        private const int DEFAULT_STATUS_CODE = 200;
 
-        public bool IsSuccess { get; private set; }
-        public string Message { get; private set; }
+        [JsonConstructor]
+        public Response()
+            => _code = DEFAULT_STATUS_CODE;
 
-        public static Response Success() => new();
-        public static Response Error(string message) => new(false, message);
-
-    }
-    public class Response<T> : Response
-    {
-        public Response(T? data, bool isSucces = true, string message = "") : base(isSucces, message)
+        public Response(
+            TData? data,
+            int code = DEFAULT_STATUS_CODE,
+            string? message = null)
         {
             Data = data;
+            Message = message;
+            _code = code;
         }
-        public T? Data { get; private set; }
-        public static Response<T> Success(T data) => new(data);
-        public static new Response<T> Error(string message) => new(default, false, message);
+        public Response(
+        List<TData>? listData,
+        int code = DEFAULT_STATUS_CODE,
+        string? message = null)
+        {
+            ListData = listData;
+            Message = message;
+            _code = code;
+        }
+        public TData? Data { get; set; }
+        public List<TData>? ListData { get; set; }
+        public string? Message { get; set; }
+
+        [JsonIgnore]
+        public bool IsSuccess
+            => _code is >= DEFAULT_STATUS_CODE and <= 299;
     }
 }
