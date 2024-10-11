@@ -15,8 +15,7 @@ namespace OrderService.Application.Queries.GetVoucherByNumber
         private readonly IVoucherRepository _voucherRepository = voucherRepository;
         public async Task<Response<Voucher>> Handle(GetVoucherByNumberQuery request, CancellationToken cancellationToken)
         {
-            var voucher = await _voucherRepository.GetVoucherByIdAsync(request.Number);
-
+            var voucher = await _voucherRepository.GetVoucherByNumberAsync(request.Number);
             if (voucher is null)
                 return new Response<Voucher>(voucher, 404, "Erro: Voucher nao encontrado");
 

@@ -16,7 +16,6 @@ namespace OrderService.Application.Queries.GetProductBySlug
         public async Task<Response<Product>> Handle(GetProductBySlugQuery request, CancellationToken cancellationToken)
         {
             var product = await _productRepository.GetProductBySlugAsync(request.Slug);
-
             if (product is null)
                 return new Response<Product>(product, 404, "Erro: Produto nao encontrado");
 

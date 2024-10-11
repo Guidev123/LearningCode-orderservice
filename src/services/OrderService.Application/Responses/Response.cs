@@ -20,17 +20,7 @@ namespace OrderService.Application.Responses
             Message = message;
             _code = code;
         }
-        public Response(
-        List<TData>? listData,
-        int code = DEFAULT_STATUS_CODE,
-        string? message = null)
-        {
-            ListData = listData;
-            Message = message;
-            _code = code;
-        }
         public TData? Data { get; set; }
-        public List<TData>? ListData { get; set; }
         public string? Message { get; set; }
 
         [JsonIgnore]

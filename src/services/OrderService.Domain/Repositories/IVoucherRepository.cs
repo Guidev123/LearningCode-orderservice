@@ -9,6 +9,8 @@ namespace OrderService.Domain.Repositories
 {
     public interface IVoucherRepository
     {
-        Task<Voucher?> GetVoucherByIdAsync(string number);
+        Task<Voucher?> GetVoucherByNumberAsync(string number);
+        Task<Voucher?> GetVoucherByIdAsync(Guid? voucherId);
+        Task UpdateVoucherAsync(Voucher voucher);
     }
 }

@@ -11,5 +11,6 @@ namespace OrderService.Domain.Repositories
     {
         Task<List<Product>?> GetAllProductsAsync();
         Task<Product?> GetProductBySlugAsync(string slug);
+        Task<Product?> GetProductByIdAsync(Guid productId);
     }
 }
