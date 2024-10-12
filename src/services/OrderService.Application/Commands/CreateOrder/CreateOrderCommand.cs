@@ -6,7 +6,7 @@ namespace OrderService.Application.Commands.CreateOrder
 {
     public class CreateOrderCommand : IRequest<Response<Order?>>
     {
-        public Guid UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
         public Guid? VoucherId { get; set; }
         public Guid ProductId { get; set; } 
     }

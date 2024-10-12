@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.Queries.GetOrderByNumber
 {
-    public class GetOrderByNumberHandler(IOrderRepository orderRepository) : IRequestHandler<GetOrderByIdQuery, Response<Order>>
-    {
+    public class GetOrderByNumberHandler(IOrderRepository orderRepository) : IRequestHandler<GetOrderByNumberQuery, Response<Order>>
+    {   
         private readonly IOrderRepository _orderRepository = orderRepository;
-        public async Task<Response<Order>> Handle(GetOrderByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Response<Order>> Handle(GetOrderByNumberQuery request, CancellationToken cancellationToken)
         {
             var order = await _orderRepository.GetOrderByIdAsync(request.OrderId, request.UserId);
             if (order is null)

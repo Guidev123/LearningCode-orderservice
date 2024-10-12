@@ -6,7 +6,7 @@ namespace OrderService.Application.Commands.CancelOrder
 {
     public class CancelOrderCommand : IRequest<Response<Order>>
     {
-        public Guid OrderId { get; set; }
-        public Guid UserId { get; set; }
+        public string Number { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
     }
 }

@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace OrderService.Application.Queries.GetOrderByNumber
 {
-    public class GetOrderByIdQuery : IRequest<Response<Order>>
+    public class GetOrderByNumberQuery : IRequest<Response<Order>>
     {
-        public Guid OrderId { get; set; } 
-        public Guid UserId { get; set; }
+        public string UserId { get; set; } = string.Empty;
+        public string Number { get; set; } = string.Empty;
     }
 }

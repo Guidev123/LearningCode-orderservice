@@ -16,7 +16,7 @@ namespace OrderService.Application.Commands.PayOrder
         private readonly IOrderRepository _orderRepository = orderRepository;
         public async Task<Response<Order>> Handle(PayOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderByIdAsync(request.OrderId, request.UserId);
+            var order = await _orderRepository.GetOrderByNumberAsync(request.OrderNumber, request.UserId);
             if(order is null) 
                 return new Response<Order>(null, 404, "Erro: Pedido nao encontrado");
 

@@ -1,15 +1,13 @@
-using Microsoft.EntityFrameworkCore;
+using OrderService.API.Endpoints;
+using OrderService.Application;
 using OrderService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<OrderDbContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty));
+builder.Services.AddInfrastructureMiddlewares(builder.Configuration);
+builder.Services.AddApplicationMiddlewares();
 
 var app = builder.Build();
 
@@ -21,8 +19,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
 
-app.MapControllers();
+app.MapEndpoints();
 
 app.Run();

@@ -13,9 +13,13 @@ namespace OrderService.Infrastructure.Persistence.Repositories
     {
         private readonly OrderDbContext _context = context;
 
-        public async Task<Order?> GetOrderByIdAsync(Guid orderId, Guid userId) => await
-                _context.Orders.Include(x => x.Product).Include(x => x.VoucherId)
-                .FirstOrDefaultAsync(x => x.Id == orderId && x.UserId == userId);
+        public async Task<Order?> GetOrderByNumberAsync(string number, string userId) => await
+                _context.Orders.Include(x => x.Product).Include(x => x.Voucher)
+                .FirstOrDefaultAsync(x => x.Number == number && x.UserId == userId);
+        
+        public async Task<List<Order>?> GetAllOrdersAsync(string userId) => await
+            _context.Orders.AsNoTracking().Include(x => x.Product).Include(x => x.Voucher)
+            .Where(x => x.UserId == userId).OrderByDescending(x => x.CreatedAt).ToListAsync();
         
         public async Task CreateOrderAsync(Order order)
         {
@@ -28,5 +32,6 @@ namespace OrderService.Infrastructure.Persistence.Repositories
             _context.Orders.Update(order);
             await _context.SaveChangesAsync();
         }
+
     }
 }

@@ -11,7 +11,7 @@ namespace OrderService.Application.Commands.CancelOrder
         private readonly IOrderRepository _orderRepository = orderRepository;
         public async Task<Response<Order>> Handle(CancelOrderCommand request, CancellationToken cancellationToken)
         {
-            var order = await _orderRepository.GetOrderByIdAsync(request.OrderId, request.UserId);
+            var order = await _orderRepository.GetOrderByNumberAsync(request.Number, request.UserId);
             if(order is null)
                 return new Response<Order>(order, 404, "Erro: Pedido nao encontrado");
 

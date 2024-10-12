@@ -31,7 +31,7 @@ namespace OrderService.Application.Commands.CreateOrder
             return new Response<Order?>(order, 201, $"Sucesso: Pedido {order.Number} foi criado");
         }
 
-        protected async Task<Response<Voucher?>> ValidateVoucherAsync(Guid? voucherId)
+        protected async Task<Response<Voucher?>> ValidateVoucherAsync(long? voucherId)
         {
 
             if (voucherId is null)
