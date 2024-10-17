@@ -18,10 +18,12 @@ namespace Orders.API.Endpoint.Orders
             long id,
             ClaimsPrincipal user)
         {
+            var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
             var request = new RefundOrderRequest()
             {
                 Id = id,
-                UserId = user.Identity!.Name ?? string.Empty
+                UserId = userIdClaim?.Value ?? string.Empty
             };
 
             var result = await orderService.RefundOrderAsync(request);

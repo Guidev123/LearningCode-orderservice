@@ -18,9 +18,11 @@ namespace Orders.API.Endpoint.Orders
             IOrderRepository orderRepository,
             string number)
         {
+            var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
             var request = new GetOrderByNumberRequest
             {
-                UserId = user.Identity?.Name ?? string.Empty,
+                UserId = userIdClaim?.Value ?? string.Empty,
                 Number = number
             };
 

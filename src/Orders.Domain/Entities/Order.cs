@@ -11,14 +11,14 @@ namespace Orders.Domain.Entities
     {
         public Order(string userId,
                       long productId,
-                      long? voucherId = null, string? number = null,
+                      long? voucherId = null,
                       string? externalReference = null)
         {
-            Number = Guid.NewGuid().ToString("N")[..8];
             UserId = userId;
             ExternalReference = externalReference;
             VoucherId = voucherId;
             ProductId = productId;
+            Number = Guid.NewGuid().ToString("N")[..8];
             CreatedAt = DateTime.Now;
             UpdatedAt = DateTime.Now;
             PaymentGateway = EPaymentGateway.Stripe;
