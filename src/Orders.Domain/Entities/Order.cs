@@ -10,12 +10,11 @@ namespace Orders.Domain.Entities
     public class Order
     {
         public Order(string userId,
-                      long productId, Product product,
-                      Voucher? voucher = null,
+                      long productId,
                       long? voucherId = null, string? number = null,
                       string? externalReference = null)
         {
-            Number = number;
+            Number = Guid.NewGuid().ToString("N")[..8];
             UserId = userId;
             ExternalReference = externalReference;
             VoucherId = voucherId;
@@ -24,8 +23,6 @@ namespace Orders.Domain.Entities
             UpdatedAt = DateTime.Now;
             PaymentGateway = EPaymentGateway.Stripe;
             Status = EOrderStatus.WaitingPayment;
-            Product = product;
-            Voucher = voucher;
         }
         protected Order() { }
 
@@ -34,7 +31,7 @@ namespace Orders.Domain.Entities
         public string UserId { get; private set; } = string.Empty;
         public DateTime CreatedAt { get; private set; }
         public DateTime UpdatedAt { get; private set; }
-        public string? ExternalReference { get; private set; }
+        public string? ExternalReference { get; private set; } = string.Empty;
         public EPaymentGateway PaymentGateway { get; private set; }
         public EOrderStatus Status { get; private set; }
         public long? VoucherId { get; private set; }

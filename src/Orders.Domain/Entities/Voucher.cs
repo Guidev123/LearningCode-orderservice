@@ -22,7 +22,6 @@
         public decimal Amount { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime EndDate { get; private set; }
-        public bool IsActive() => StartDate >= DateTime.Now && EndDate >= DateTime.Now && IsUsed is false;
         public void SetVoucherAsUsed() => IsUsed = true;
     }
 }

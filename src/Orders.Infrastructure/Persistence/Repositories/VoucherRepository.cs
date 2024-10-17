@@ -11,11 +11,11 @@ namespace Orders.Infrastructure.Persistence.Repositories
         private readonly OrdersDbContext _context = context;
 
         public async Task<Voucher?> GetVoucherByIdAsync(long? voucherId) =>
-            await _context.Vouchers.AsNoTracking().FirstOrDefaultAsync(x => x.Id == voucherId && x.IsActive());
+            await _context.Vouchers.AsNoTracking().FirstOrDefaultAsync(x => x.Id == voucherId && !x.IsUsed);
 
         public async Task<Response<Voucher?>> GetVoucherByNumberAsync(GetVoucherByNumberRequest request) =>
              new Response<Voucher?>(await _context.Vouchers.AsNoTracking()
-                                   .FirstOrDefaultAsync(x => x.Number == request.Number && x.IsActive()));
+                                   .FirstOrDefaultAsync(x => x.Number == request.Number && !x.IsUsed));
 
         public async Task UpdateVoucherAsync(Voucher voucher)
         {

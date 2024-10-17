@@ -12,16 +12,23 @@ namespace Orders.Infrastructure.Persistence.Repositories
 
         public async Task<PagedResponse<List<Order>?>> GetAllOrdersAsync(GetAllOrdersRequest request)
         {
-            var orders = await _context.Orders.AsNoTracking()
+            var query = _context.Orders.AsNoTracking()
                                             .Include(x => x.Product)
                                             .Include(x => x.Voucher)
                                             .Where(x => x.UserId == request.UserId)
-                                            .OrderByDescending(x => x.CreatedAt).ToListAsync();
+                                            .OrderBy(x => x.CreatedAt);
+
+            var orders = await query.Skip((request.PageNumber - 1) * request.PageSize)
+                                    .Take(request.PageSize)
+                                    .ToListAsync();
+
+            var count = await query.CountAsync();
+
 
             if (orders is null)
                 return new PagedResponse<List<Order>?>(null, 404, "Erro: Nao foi encontrado nenhum pedido");
-            
-            return new PagedResponse<List<Order>?>(orders, 200, "Sucesso: Pedidos encontrados");
+
+            return new PagedResponse<List<Order>?>(orders, count, request.PageNumber, request.PageSize);
         }
 
         public async Task<Response<Order?>> GetOrderByNumberAsync(GetOrderByNumberRequest request)

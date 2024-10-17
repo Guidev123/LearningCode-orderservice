@@ -55,7 +55,7 @@ namespace Orders.Domain.Services
             if (!voucher.IsSuccess)
                 return new Response<Order>(null, 404, voucher.Message);
 
-            var order = new Order(request.UserId, request.ProductId, orderProduct, voucher.Data, request.VoucherId);
+            var order = new Order(request.UserId, request.ProductId, voucher.Data, request.VoucherId);
             await _orderRepository.CreateOrderAsync(order);
 
 
@@ -128,7 +128,7 @@ namespace Orders.Domain.Services
             if (voucher is null)
                 return new Response<Voucher?>(null, 404, "Erro: Esse voucher informado nao foi encontrado");
 
-            if (!voucher.IsActive())
+            if (voucher.IsUsed)
                 return new Response<Voucher?>(null, 400, "Erro: Esse voucher nao esta ativo mais");
 
             voucher.SetVoucherAsUsed();

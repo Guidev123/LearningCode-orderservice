@@ -18,7 +18,9 @@ namespace Orders.API.Endpoint.Orders
             CreateOrderRequest request,
             ClaimsPrincipal user)
         {
-            request.UserId = user.Identity!.Name ?? string.Empty;
+            var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+            request.UserId = userIdClaim?.Value ?? string.Empty;
 
             var result = await orderService.CreateOrderAsync(request);
             return result.IsSuccess

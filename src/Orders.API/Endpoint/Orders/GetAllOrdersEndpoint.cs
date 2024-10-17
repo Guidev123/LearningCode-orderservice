@@ -21,9 +21,11 @@ namespace Orders.API.Endpoint.Orders
             [FromQuery] int pageNumber = ApplicationModule.DEFAULT_PAGE_NUMBER,
             [FromQuery] int pageSize = ApplicationModule.DEFAULT_PAGE_SIZE)
         {
+            var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
             var request = new GetAllOrdersRequest
             {
-                UserId = user.Identity?.Name ?? string.Empty,
+                UserId = userIdClaim?.Value ?? string.Empty,
                 PageNumber = pageNumber,
                 PageSize = pageSize,
             };
