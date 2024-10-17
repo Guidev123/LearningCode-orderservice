@@ -2,11 +2,15 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Orders.Domain.Interfaces.ExternalServices;
 using Orders.Domain.Interfaces.Repositories;
 using Orders.Domain.Interfaces.Services;
 using Orders.Domain.Services;
 using Orders.Infrastructure;
+using Orders.Infrastructure.ExternalServices;
+using Orders.Infrastructure.Models;
 using Orders.Infrastructure.Persistence.Repositories;
+using Stripe;
 using System.Text;
 
 namespace Orders.API.Middlewares
@@ -30,52 +34,13 @@ namespace Orders.API.Middlewares
             builder.Services.AddTransient<IOrderRepository, OrderRepository>();
             builder.Services.AddTransient<IVoucherRepository, VoucherRepository>();
             builder.Services.AddTransient<IProductRepository, ProductRepository>();
+            builder.Services.AddTransient<IStripeService, StripeService>();
+            builder.Services.Configure<StripeConfigurationSettings>(
+                builder.Configuration.GetSection(nameof(StripeConfigurationSettings)));
         }
 
-        public static void ConfigureDataBase(this WebApplicationBuilder builder)
-        {
-            builder.Services.AddDbContext<OrdersDbContext>(opt =>
-                opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty));
-        }
-
-        public static void AddDocumentationConfig(this WebApplicationBuilder builder)
-        {
-            builder.Services.AddEndpointsApiExplorer();
-
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo()
-                {
-                    Title = "Lerning Code Enterprise API",
-                    Contact = new OpenApiContact() { Name = "Guilherme Nascimento", Email = "guirafaelrn@gmail.com" },
-                    License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://opensource.org/license/MIT") }
-                });
-
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    Description = "Insira o token JWT desta forma: Bearer {seu token}",
-                    Name = "Authorization",
-                    Scheme = "Bearer",
-                    BearerFormat = "JWT",
-                    In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
-                });
-            });
-        }
+        public static void ConfigureDataBase(this WebApplicationBuilder builder) =>
+            builder.Services.AddDbContext<OrdersDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty));
 
         public static void AddSecurityConfig(this WebApplicationBuilder builder)
         {

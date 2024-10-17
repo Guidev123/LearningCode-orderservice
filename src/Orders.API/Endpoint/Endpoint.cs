@@ -1,6 +1,8 @@
 ﻿using Orders.API.Endpoint.Orders;
 using Orders.API.Endpoint.Products;
+using Orders.API.Endpoint.Stripe;
 using Orders.API.Endpoint.Vouchers;
+using Orders.Domain.Request.Stripe;
 
 namespace Orders.API.Endpoint
 {
@@ -31,6 +33,12 @@ namespace Orders.API.Endpoint
                .RequireAuthorization()
                .MapEndpoint<GetAllProductsEndpoint>()
                .MapEndpoint<GetProductBySlugEndpoint>();
+
+            endpoints.MapGroup("api/payments")
+               .WithTags("Payments")
+               .RequireAuthorization()
+               .MapEndpoint<GetTransactionsByOrderNumberEndpoint>()
+               .MapEndpoint<CreateSessionEndpoint>();
 
         }
 
