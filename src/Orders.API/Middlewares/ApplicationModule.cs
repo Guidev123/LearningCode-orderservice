@@ -102,20 +102,6 @@ namespace Orders.API.Middlewares
             builder.Services.AddAuthorization();
         }
 
-        //public static void AddCorsConfig(this WebApplicationBuilder builder)
-        //{
-        //    builder.Services.AddCors(options =>
-        //    {
-        //        options.AddPolicy("Total", policy =>
-        //        {
-        //            policy.AllowAnyOrigin()
-        //                  .AllowAnyHeader()
-        //                  .AllowAnyMethod()
-        //                  .AllowCredentials();
-        //        });
-        //    });
-        //}
-
         public static void ConfigureDevEnvironment(this WebApplication app)
         {
             app.UseSwagger();
@@ -124,8 +110,6 @@ namespace Orders.API.Middlewares
         }
         public static void UseSecurity(this WebApplication app)
         {
-            //app.UseCors("Total");
-
             app.UseAuthentication();
             app.UseAuthorization();
         }
