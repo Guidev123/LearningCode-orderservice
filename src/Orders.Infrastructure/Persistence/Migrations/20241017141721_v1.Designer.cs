@@ -5,15 +5,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
+using Orders.Infrastructure;
 
 #nullable disable
 
 namespace Orders.Infrastructure.Migrations
 {
     [DbContext(typeof(OrdersDbContext))]
-    [Migration("20241014171400_Initial")]
-    partial class Initial
+    [Migration("20241017141721_v1")]
+    partial class v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Orders.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Order.Domain.Entities.Orders", b =>
+            modelBuilder.Entity("Orders.Domain.Entities.Order", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -54,6 +54,9 @@ namespace Orders.Infrastructure.Migrations
                     b.Property<short>("Status")
                         .HasColumnType("SMALLINT");
 
+                    b.Property<decimal>("Total")
+                        .HasColumnType("MONEY");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("DATETIME2");
 
@@ -74,7 +77,7 @@ namespace Orders.Infrastructure.Migrations
                     b.ToTable("Orders", (string)null);
                 });
 
-            modelBuilder.Entity("Order.Domain.Entities.Product", b =>
+            modelBuilder.Entity("Orders.Domain.Entities.Product", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -106,7 +109,7 @@ namespace Orders.Infrastructure.Migrations
                     b.ToTable("Product", (string)null);
                 });
 
-            modelBuilder.Entity("Order.Domain.Entities.Voucher", b =>
+            modelBuilder.Entity("Orders.Domain.Entities.Voucher", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,15 +148,15 @@ namespace Orders.Infrastructure.Migrations
                     b.ToTable("Voucher", (string)null);
                 });
 
-            modelBuilder.Entity("Order.Domain.Entities.Orders", b =>
+            modelBuilder.Entity("Orders.Domain.Entities.Order", b =>
                 {
-                    b.HasOne("Order.Domain.Entities.Product", "Product")
+                    b.HasOne("Orders.Domain.Entities.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Order.Domain.Entities.Voucher", "Voucher")
+                    b.HasOne("Orders.Domain.Entities.Voucher", "Voucher")
                         .WithMany()
                         .HasForeignKey("VoucherId");
 

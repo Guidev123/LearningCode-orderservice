@@ -3,6 +3,7 @@ using Orders.Domain.Entities;
 using Orders.Domain.Interfaces.Repositories;
 using Orders.Domain.Request.Products;
 using Orders.Domain.Response;
+using Orders.Domain.Response.Messages;
 
 namespace Orders.Infrastructure.Persistence.Repositories
 {
@@ -26,12 +27,18 @@ namespace Orders.Infrastructure.Persistence.Repositories
             return new PagedResponse<List<Product>?>(products, count, request.PageNumber, request.PageSize);
         }
 
-        public async Task<Response<Product?>> GetProductBySlugAsync(GetProductBySlugRequest request) =>
-            new Response<Product?>(await _context.Products.AsNoTracking()
-                                  .FirstOrDefaultAsync(x => x.Slug == request.Slug && x.IsActive));
+        public async Task<Response<Product?>> GetProductBySlugAsync(GetProductBySlugRequest request)
+        {
+
+            var product = await _context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Slug == request.Slug && x.IsActive);
+            if(product is null)
+                return new Response<Product?>(null, 404, ResponseMessages.PRODUCTS_RETRIEVAL_FAILED.GetDescription());
+
+            return new Response<Product?>(product, 200, ResponseMessages.PRODUCTS_RETRIEVED_SUCCESS.GetDescription());
+        }
 
         public async Task<Product?> GetProductByIdAsync(long orderId) =>
-            await _context.Products.AsNoTracking().FirstOrDefaultAsync(x => x.Id == orderId && x.IsActive);
+            await _context.Products.FirstOrDefaultAsync(x => x.Id == orderId && x.IsActive);
 
     }
 }

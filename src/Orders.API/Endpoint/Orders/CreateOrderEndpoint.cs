@@ -23,6 +23,7 @@ namespace Orders.API.Endpoint.Orders
             request.UserId = userIdClaim?.Value ?? string.Empty;
 
             var result = await orderService.CreateOrderAsync(request);
+
             return result.IsSuccess
                 ? TypedResults.Created($"api/orders/{result.Data?.Number}", result)
                 : TypedResults.BadRequest(result);

@@ -11,11 +11,17 @@ namespace Orders.Domain.Entities
     {
         public Order(string userId,
                       long productId,
+                      Product product,
+                      decimal total,
+                      Voucher? voucher,
                       long? voucherId = null,
                       string? externalReference = null)
         {
             UserId = userId;
             ExternalReference = externalReference;
+            Product = product;
+            Total = total;
+            Voucher = voucher;
             VoucherId = voucherId;
             ProductId = productId;
             Number = Guid.NewGuid().ToString("N")[..8];
@@ -38,7 +44,7 @@ namespace Orders.Domain.Entities
         public long ProductId { get; private set; }
         public Voucher? Voucher { get; private set; }
         public Product Product { get; private set; } = null!;
-        public decimal Total() => Product.Price - (Voucher?.Amount ?? 0);
+        public decimal Total { get; private set; }
         public void CancellStatusOrder()
         {
             Status = EOrderStatus.Canceled;

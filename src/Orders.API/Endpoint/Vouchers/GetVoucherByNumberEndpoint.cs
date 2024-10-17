@@ -22,6 +22,7 @@ namespace Orders.API.Endpoint.Vouchers
             };
 
             var result = await voucherRepository.GetVoucherByNumberAsync(request);
+
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

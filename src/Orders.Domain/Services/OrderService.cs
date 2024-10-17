@@ -51,7 +51,9 @@ namespace Orders.Domain.Services
             if (!voucher.IsSuccess)
                 return new Response<Order>(null, 404, voucher.Message);
 
-            var order = new Order(request.UserId, request.ProductId, request.VoucherId);
+            var order = new Order(request.UserId,request.ProductId, orderProduct,
+                                  orderProduct.Price - (voucher.Data?.Amount ?? 0), voucher.Data, request.VoucherId);
+
             await _orderRepository.CreateOrderAsync(order);
 
 

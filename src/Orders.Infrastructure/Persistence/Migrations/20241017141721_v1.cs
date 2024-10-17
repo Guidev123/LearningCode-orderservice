@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Orders.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class v1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -61,7 +61,8 @@ namespace Orders.Infrastructure.Migrations
                     PaymentGateway = table.Column<short>(type: "SMALLINT", nullable: false),
                     Status = table.Column<short>(type: "SMALLINT", nullable: false),
                     VoucherId = table.Column<long>(type: "bigint", nullable: true),
-                    ProductId = table.Column<long>(type: "bigint", nullable: false)
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    Total = table.Column<decimal>(type: "MONEY", nullable: false)
                 },
                 constraints: table =>
                 {

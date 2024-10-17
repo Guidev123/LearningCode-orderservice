@@ -3,6 +3,7 @@ using Orders.Domain.Entities;
 using Orders.Domain.Interfaces.Repositories;
 using Orders.Domain.Request.Orders;
 using Orders.Domain.Response;
+using Orders.Domain.Response.Messages;
 
 namespace Orders.Infrastructure.Persistence.Repositories
 {
@@ -33,10 +34,11 @@ namespace Orders.Infrastructure.Persistence.Repositories
 
         public async Task<Response<Order?>> GetOrderByNumberAsync(GetOrderByNumberRequest request)
         {
-            return new Response<Order?>(await _context.Orders.Include(x => x.Product).Include(x => x.Voucher)
-                                 .FirstOrDefaultAsync(x => x.Number == request.Number
-                                                      && x.UserId == request.UserId));
+            var order = await _context.Orders.Include(x => x.Product).Include(x => x.Voucher).FirstOrDefaultAsync(x => x.Number == request.Number && x.UserId == request.UserId);
+            if (order is null)
+                return new Response<Order?>(null, 404, ResponseMessages.ORDER_NOT_FOUND.GetDescription());
 
+            return new Response<Order?>(order, 200, ResponseMessages.ORDERS_RETRIEVED_SUCCESS.GetDescription());
         }
         public async Task<Order?> GetOrderByIdAsync(long? orderId, string userId) => await
                 _context.Orders.Include(x => x.Product).Include(x => x.Voucher)

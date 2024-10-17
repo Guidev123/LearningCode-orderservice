@@ -23,6 +23,8 @@ namespace Orders.Infrastructure.Persistence.Mapping
             builder.Property(x => x.UpdatedAt).IsRequired().HasColumnType("DATETIME2");
 
             builder.Property(x => x.Status).IsRequired().HasColumnType("SMALLINT");
+            
+            builder.Property(x => x.Total).IsRequired().HasColumnType("MONEY");
 
             builder.Property(x => x.UserId).IsRequired().HasColumnType("VARCHAR").HasMaxLength(160);
 
