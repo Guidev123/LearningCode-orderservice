@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using Orders.Domain.Interfaces.ExternalServices;
 using Orders.Domain.Request.Stripe;
 using Orders.Domain.Response;
+using Orders.Domain.Response.Messages;
 using Orders.Domain.Response.Stripe;
 using Orders.Infrastructure.Models;
 using Stripe;
@@ -34,7 +35,7 @@ namespace Orders.Infrastructure.ExternalServices
                         { "order", request.OrderNumber }
                     }
                 },
-                PaymentMethodTypes = ["card"],
+                PaymentMethodTypes = [_stripeSettings.PaymentMethodTypes],
                 LineItems =
                 [
                     new SessionLineItemOptions
@@ -52,9 +53,9 @@ namespace Orders.Infrastructure.ExternalServices
                         Quantity = 1
                     }
                 ],
-                Mode = "payment",
-                SuccessUrl = $"https://localhost:8080/pedidos/{request.OrderNumber}/confirmar",
-                CancelUrl = $"https://localhost:8080/pedidos/{request.OrderNumber}/cancelar",
+                Mode = _stripeSettings.StripeMode,
+                SuccessUrl = $"{_stripeSettings.FrontendUrl}/orders/{request.OrderNumber}/confirm",
+                CancelUrl = $"{_stripeSettings.FrontendUrl}/orders/{request.OrderNumber}/cancel",
             };
 
             var service = new SessionService(client);
@@ -63,7 +64,7 @@ namespace Orders.Infrastructure.ExternalServices
 
             var result = new StripeSessionData(session.Id, checkoutUrl);
 
-            return new Response<StripeSessionData>(result, 200, "Sucess");
+            return new Response<StripeSessionData>(result, 200, ResponseMessages.SESSION_CREATED.GetDescription());
         }
 
         public async Task<Response<List<StripeTransactionData>>> GetTransactionsByOrderNumberAsync(GetTransactionByOrderNumberRequest request)
@@ -77,7 +78,7 @@ namespace Orders.Infrastructure.ExternalServices
             var result = await service.SearchAsync(options);
 
             if (result.Data.Count.Equals(0))
-                return new Response<List<StripeTransactionData>>(null, 404, "Transação não encontrada");
+                return new Response<List<StripeTransactionData>>(null, 404, ResponseMessages.TRANSACTION_NOT_FOUND.GetDescription());
 
             var data = new List<StripeTransactionData>();
             foreach (var item in result.Data)
@@ -86,7 +87,7 @@ namespace Orders.Infrastructure.ExternalServices
                                                    item.AmountCaptured, item.Status, item.Paid, item.Refunded));
             }
 
-            return new Response<List<StripeTransactionData>>(data, 200, "Sucess");
+            return new Response<List<StripeTransactionData>>(data, 200, ResponseMessages.TRANSACTION_RETRIEVED_SUCCESS.GetDescription());
         }
     }
 }

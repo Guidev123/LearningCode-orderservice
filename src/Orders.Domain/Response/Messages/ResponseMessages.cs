@@ -74,7 +74,19 @@ public enum ResponseMessages
     [Description("Error: The order cannot be refunded.")]
     ORDER_CANNOT_BE_REFUNDED,
     [Description("Success: The order has been refunded successfully.")]
-    ORDER_REFUNDED_SUCCESS
+    ORDER_REFUNDED_SUCCESS,
+    [Description("Error: Unable to locate the payment for your order.")]
+    PAYMENT_NOT_FOUND,
+    [Description("Error: This order has already been refunded and cannot be paid.")]
+    ORDER_ALREADY_REFUNDED_CANNOT_BE_PAID,
+    [Description("Error: This order has not been paid yet.")]
+    ORDER_NOT_PAID_YET,
+    [Description("Error: Transaction not found.")]
+    TRANSACTION_NOT_FOUND,
+    [Description("Success: Transaction retrieved successfully.")]
+    TRANSACTION_RETRIEVED_SUCCESS,
+    [Description("Success: Session has been created successfully.")]
+    SESSION_CREATED
 
 }
 public static class EnumExtensions

@@ -11,9 +11,9 @@ namespace Orders.Domain.Interfaces.Services
 {
     public interface IOrderService
     {
-        Task<Response<Order>> CreateOrderAsync(CreateOrderRequest request);
-        Task<Response<Order>> CancelOrderAsync(CancelOrderRequest request);
-        Task<Response<Order>> PayOrderAsync(PayOrderRequest request);
-        Task<Response<Order>> RefundOrderAsync(RefundOrderRequest request);
+        Task<Response<Order?>> CreateOrderAsync(CreateOrderRequest request);
+        Task<Response<Order?>> CancelOrderAsync(CancelOrderRequest request);
+        Task<Response<Order?>> PayOrderAsync(PayOrderRequest request);
+        Task<Response<Order?>> RefundOrderAsync(RefundOrderRequest request);
     }
 }
