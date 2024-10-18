@@ -108,3 +108,11 @@
             </ul>
         </li>
     </ul>
+
+  <h1>Arquitetura e Fluxograma</h1>
+
+          
+  ![AYc3o9il0nNSAAAAAElFTkSuQmCC](https://github.com/user-attachments/assets/de2bff55-b337-4dab-9f2d-9effa6281351)
+  
+  
+   ![Fluxograma Pedido Online Amarelo Marrom](https://github.com/user-attachments/assets/6a537f55-6c90-4617-b8d6-ee41df37d44f)
