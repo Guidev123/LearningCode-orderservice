@@ -1,7 +1,11 @@
 ﻿namespace Orders.Domain.Request.Products
 {
-    public class GetProductBySlugRequest : Request
+    public class GetProductBySlugRequest
     {
-        public string Slug { get; set; } = string.Empty;
+        public GetProductBySlugRequest(string slug)
+        {
+            Slug = slug;
+        }
+        public string Slug { get; private set; }
     }
 }

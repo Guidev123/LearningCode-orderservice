@@ -21,10 +21,9 @@ namespace Orders.API.Endpoint.Orders
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            request.OrderNumber = number;
-            request.UserId = userIdClaim?.Value ?? string.Empty;
+            var order = new PayOrderRequest(userIdClaim?.Value ?? string.Empty, number, request.OrderId);
 
-            var result = await orderService.PayOrderAsync(request);
+            var result = await orderService.PayOrderAsync(order);
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

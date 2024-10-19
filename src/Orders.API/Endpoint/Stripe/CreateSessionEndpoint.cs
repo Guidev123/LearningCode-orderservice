@@ -19,11 +19,11 @@ namespace Orders.API.Endpoint.Stripe
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             var userEmailClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
 
-            request.UserId = userIdClaim?.Value ?? string.Empty;
-            request.UserEmail = userEmailClaim?.Value ?? string.Empty;
+            var session = new CreateSessionRequest(userEmailClaim?.Value ?? string.Empty, userIdClaim?.Value ?? string.Empty,
+                                                   request.OrderNumber, request.ProductTitle, request.ProductDescription,
+                                                   request.OrderTotal);
 
-
-            var result = await stripeService.CreateSessionAsync(request);
+            var result = await stripeService.CreateSessionAsync(session);
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

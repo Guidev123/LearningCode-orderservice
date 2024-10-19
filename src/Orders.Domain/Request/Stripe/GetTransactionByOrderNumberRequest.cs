@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace Orders.Domain.Request.Stripe
 {
-    public class GetTransactionByOrderNumberRequest : Request
+    public class GetTransactionByOrderNumberRequest
     {
-        public string Number { get; set; } = string.Empty;
+        public GetTransactionByOrderNumberRequest(string number)
+        {
+            Number = number;
+        }
+        public string Number { get; private set; }
     }
 }

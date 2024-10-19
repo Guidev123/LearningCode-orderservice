@@ -18,11 +18,7 @@ namespace Orders.API.Endpoint.Stripe
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var request = new GetTransactionByOrderNumberRequest
-            {
-                UserId = userIdClaim?.Value ?? string.Empty,
-                Number = number
-            };
+            var request = new GetTransactionByOrderNumberRequest(number);
 
             var result = await stripeService.GetTransactionsByOrderNumberAsync(request);
             return result.IsSuccess

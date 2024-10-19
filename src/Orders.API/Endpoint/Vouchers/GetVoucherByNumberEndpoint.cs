@@ -16,10 +16,7 @@ namespace Orders.API.Endpoint.Vouchers
             IVoucherRepository voucherRepository,
             string number)
         {
-            var request = new GetVoucherByNumberRequest
-            {
-                Number = number
-            };
+            var request = new GetVoucherByNumberRequest(number);
 
             var result = await voucherRepository.GetVoucherByNumberAsync(request);
 

@@ -20,9 +20,9 @@ namespace Orders.API.Endpoint.Orders
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            request.UserId = userIdClaim?.Value ?? string.Empty;
+            var order = new CreateOrderRequest(request.ProductId, userIdClaim?.Value ?? string.Empty, request.VoucherId);
 
-            var result = await orderService.CreateOrderAsync(request);
+            var result = await orderService.CreateOrderAsync(order);
 
             return result.IsSuccess
                 ? TypedResults.Created($"api/orders/{result.Data?.Number}", result)

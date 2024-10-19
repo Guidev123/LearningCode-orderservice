@@ -1,7 +1,18 @@
-﻿namespace Orders.Domain.Request.Orders
+﻿using System.Text.Json.Serialization;
+
+namespace Orders.Domain.Request.Orders
 {
-    public class GetOrderByNumberRequest : Request
+    public class GetOrderByNumberRequest
     {
-        public string Number { get; set; } = string.Empty;
+        public GetOrderByNumberRequest(string number, string userId)
+        {
+            Number = number;
+            UserId = userId;
+        }
+
+        public string Number { get; private set; }
+
+        [JsonIgnore]
+        public string UserId { get; private set; }
     }
 }

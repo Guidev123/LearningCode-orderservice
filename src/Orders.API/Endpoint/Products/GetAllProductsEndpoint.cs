@@ -19,11 +19,7 @@ namespace Orders.API.Endpoint.Products
             [FromQuery] int pageNumber = ApplicationModule.DEFAULT_PAGE_NUMBER,
             [FromQuery] int pageSize = ApplicationModule.DEFAULT_PAGE_SIZE)
         {
-            var request = new GetAllProductsRequest
-            {
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-            };
+            var request = new GetAllProductsRequest(pageNumber, pageSize);
 
             var result = await productRepository.GetAllProductsAsync(request);
             return result.IsSuccess

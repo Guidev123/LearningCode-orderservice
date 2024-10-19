@@ -20,11 +20,7 @@ namespace Orders.API.Endpoint.Orders
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var request = new GetOrderByNumberRequest
-            {
-                UserId = userIdClaim?.Value ?? string.Empty,
-                Number = number
-            };
+            var request = new GetOrderByNumberRequest(number, userIdClaim?.Value ?? string.Empty);
 
             var result = await orderRepository.GetOrderByNumberAsync(request);
             return result.IsSuccess

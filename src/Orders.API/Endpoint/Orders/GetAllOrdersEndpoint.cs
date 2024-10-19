@@ -23,12 +23,7 @@ namespace Orders.API.Endpoint.Orders
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var request = new GetAllOrdersRequest
-            {
-                UserId = userIdClaim?.Value ?? string.Empty,
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-            };
+            var request = new GetAllOrdersRequest(userIdClaim?.Value ?? string.Empty, pageNumber, pageSize);
 
             var result = await orderRepository.GetAllOrdersAsync(request);
             return result.IsSuccess

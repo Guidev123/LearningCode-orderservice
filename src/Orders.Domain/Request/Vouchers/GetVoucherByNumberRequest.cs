@@ -1,7 +1,12 @@
 ﻿namespace Orders.Domain.Request.Vouchers
 {
-    public class GetVoucherByNumberRequest : Request
+    public class GetVoucherByNumberRequest
     {
-        public string Number { get; set; } = string.Empty;
+        public GetVoucherByNumberRequest(string number)
+        {
+            Number = number;
+        }
+
+        public string Number { get; private set; } 
     }
 }

@@ -16,10 +16,7 @@ namespace Orders.API.Endpoint.Products
             IProductRepository productRepository,
             string slug)
         {
-            var request = new GetProductBySlugRequest
-            {
-                Slug = slug
-            };
+            var request = new GetProductBySlugRequest(slug);
 
             var result = await productRepository.GetProductBySlugAsync(request);
             return result.IsSuccess

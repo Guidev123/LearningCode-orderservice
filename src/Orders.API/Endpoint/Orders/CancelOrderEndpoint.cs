@@ -20,11 +20,7 @@ namespace Orders.API.Endpoint.Orders
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var request = new CancelOrderRequest
-            {
-                Id = id,
-                UserId = userIdClaim?.Value ?? string.Empty
-            };
+            var request = new CancelOrderRequest(id, userIdClaim?.Value ?? string.Empty);
 
             var result = await orderService.CancelOrderAsync(request);
             return result.IsSuccess

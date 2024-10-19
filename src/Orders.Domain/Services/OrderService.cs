@@ -84,10 +84,7 @@ namespace Orders.Domain.Services
                     return new Response<Order?>(order, 400, ResponseMessages.ORDER_CANNOT_BE_PAID.GetDescription());
             }
 
-            var getTransactionByOrderNumberRequest = new GetTransactionByOrderNumberRequest
-            {
-                Number = order.Number ?? string.Empty
-            };
+            var getTransactionByOrderNumberRequest = new GetTransactionByOrderNumberRequest(order.Number ?? string.Empty);
 
             var result = await _stripeService.GetTransactionsByOrderNumberAsync(getTransactionByOrderNumberRequest);
 
@@ -103,9 +100,7 @@ namespace Orders.Domain.Services
             if (!result.Data.Any(item => item.Paid))
                 return new Response<Order?>(null, 500, ResponseMessages.ORDER_NOT_PAID_YET.GetDescription());
 
-            request.ExternalReference = result.Data[0].Id;
-
-            order.PayStatusOrder(request.ExternalReference);
+            order.PayStatusOrder(result.Data[0].Id);
             await _orderRepository.UpdateOrderAsync(order);
 
             return new Response<Order?>(order, 200, ResponseMessages.ORDER_PAID_SUCCESS.GetDescription());

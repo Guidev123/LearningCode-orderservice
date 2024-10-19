@@ -20,11 +20,7 @@ namespace Orders.API.Endpoint.Orders
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var request = new RefundOrderRequest()
-            {
-                Id = id,
-                UserId = userIdClaim?.Value ?? string.Empty
-            };
+            var request = new RefundOrderRequest(id, userIdClaim?.Value ?? string.Empty);
 
             var result = await orderService.RefundOrderAsync(request);
             return result.IsSuccess

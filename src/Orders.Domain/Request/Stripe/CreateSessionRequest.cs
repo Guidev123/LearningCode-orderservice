@@ -7,14 +7,25 @@ using System.Threading.Tasks;
 
 namespace Orders.Domain.Request.Stripe
 {
-    public class CreateSessionRequest : Request
+    public class CreateSessionRequest
     {
-        [JsonIgnore]
-        public string UserEmail { get; set; } = string.Empty;
+        public CreateSessionRequest(string userEmail, string userId, string orderNumber, string productTitle, string productDescription, int orderTotal)
+        {
+            UserEmail = userEmail;
+            UserId = userId;
+            OrderNumber = orderNumber;
+            ProductTitle = productTitle;
+            ProductDescription = productDescription;
+            OrderTotal = orderTotal;
+        }
 
-        public string OrderNumber { get; set; } = string.Empty;
-        public string ProductTitle { get; set; } = string.Empty;
-        public string ProductDescription { get; set; } = string.Empty;
-        public int OrderTotal { get; set; }
+        [JsonIgnore]
+        public string UserEmail { get; private set; }
+        [JsonIgnore]
+        public string UserId { get; private set; }
+        public string OrderNumber { get; private set; }
+        public string ProductTitle { get; private set; }
+        public string ProductDescription { get; private set; }
+        public int OrderTotal { get; private set; }
     }
 }
