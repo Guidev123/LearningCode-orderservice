@@ -1,16 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Orders.API.Services;
 using Orders.Domain.Interfaces.ExternalServices;
 using Orders.Domain.Interfaces.Repositories;
 using Orders.Domain.Interfaces.Services;
-using Orders.Domain.Services;
 using Orders.Infrastructure;
 using Orders.Infrastructure.ExternalServices;
+using Orders.Infrastructure.Messages;
 using Orders.Infrastructure.Models;
 using Orders.Infrastructure.Persistence.Repositories;
-using Stripe;
 using System.Text;
 
 namespace Orders.API.Middlewares
@@ -35,8 +34,8 @@ namespace Orders.API.Middlewares
             builder.Services.AddTransient<IVoucherRepository, VoucherRepository>();
             builder.Services.AddTransient<IProductRepository, ProductRepository>();
             builder.Services.AddTransient<IStripeService, StripeService>();
-            builder.Services.Configure<StripeConfigurationSettings>(
-                builder.Configuration.GetSection(nameof(StripeConfigurationSettings)));
+            builder.Services.Configure<StripeConfigurationSettings>(builder.Configuration.GetSection(nameof(StripeConfigurationSettings)));
+            builder.Services.Configure<BusSettings>(builder.Configuration.GetSection(nameof(BusSettings)));
         }
 
         public static void ConfigureDataBase(this WebApplicationBuilder builder) =>

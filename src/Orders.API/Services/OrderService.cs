@@ -1,4 +1,6 @@
-﻿using Orders.Domain.Entities;
+﻿using EasyNetQ;
+using Microsoft.Extensions.Options;
+using Orders.Domain.Entities;
 using Orders.Domain.Enums;
 using Orders.Domain.Interfaces.ExternalServices;
 using Orders.Domain.Interfaces.Repositories;
@@ -7,18 +9,36 @@ using Orders.Domain.Request.Orders;
 using Orders.Domain.Request.Stripe;
 using Orders.Domain.Response;
 using Orders.Domain.Response.Messages;
+using Orders.Infrastructure.Messages;
+using Orders.Infrastructure.Messages.Integration;
 
-namespace Orders.Domain.Services
+namespace Orders.API.Services
 {
-    public class OrderService(IOrderRepository orderRepository,
-                              IVoucherRepository voucherRepository,
-                              IProductRepository productRepository,
-                              IStripeService stripeService) : IOrderService
+    public class OrderService : IOrderService
     {
-        private readonly IOrderRepository _orderRepository = orderRepository;
-        private readonly IVoucherRepository _voucherRepository = voucherRepository;
-        private readonly IProductRepository _productRepository = productRepository;
-        private readonly IStripeService _stripeService = stripeService;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IVoucherRepository _voucherRepository;
+        private readonly IProductRepository _productRepository;
+        private readonly IStripeService _stripeService;
+        private readonly BusSettings _busSettings;
+        private readonly IBus _bus;
+
+        public OrderService(IOrderRepository orderRepository,
+                                  IVoucherRepository voucherRepository,
+                                  IProductRepository productRepository,
+                                  IStripeService stripeService,
+                                  IOptions<BusSettings> busSettings)
+        {
+            _orderRepository = orderRepository;
+            _voucherRepository = voucherRepository;
+            _productRepository = productRepository;
+            _stripeService = stripeService;
+            _busSettings = busSettings.Value;
+            _bus = RabbitHutch.CreateBus(_busSettings.Connection, register =>
+            {
+                register.EnableNewtonsoftJson();
+            });
+        }
 
         public async Task<Response<Order?>> CancelOrderAsync(CancelOrderRequest request)
         {
@@ -102,6 +122,10 @@ namespace Orders.Domain.Services
             order.PayStatusOrder(result.Data[0].Id);
             await _orderRepository.UpdateOrderAsync(order);
 
+            // SEND MESSAGE
+
+            var message = await SendUpdateUserRoleMessage(new(true, Guid.Parse(request.UserId)));
+
             return new Response<Order?>(order, 200, ResponseMessages.ORDER_PAID_SUCCESS.GetDescription());
         }
 
@@ -132,6 +156,14 @@ namespace Orders.Domain.Services
         }
 
         #region Utils
+
+
+        protected async Task<ResponseMessage<UserUpdateRoleIntegrationEvent>> SendUpdateUserRoleMessage(UserUpdateRoleIntegrationEvent integrationEvent)
+        {
+            var sucess = await _bus.Rpc.RequestAsync<UserUpdateRoleIntegrationEvent, ResponseMessage<UserUpdateRoleIntegrationEvent>>(integrationEvent);
+            return sucess;
+        }
+
         protected async Task<Response<Voucher?>> ValidateVoucherAsync(long? voucherId)
         {
 
