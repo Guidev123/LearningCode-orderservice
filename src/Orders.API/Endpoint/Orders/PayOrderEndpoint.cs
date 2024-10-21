@@ -13,11 +13,10 @@ namespace Orders.API.Endpoint.Orders
                 .WithOrder(3)
                 .Produces<Response<Order?>>();
 
-        private static async Task<IResult> HandleAsync(
-            IOrderService orderService,
-            string number,
-            PayOrderRequest request,
-            ClaimsPrincipal user)
+        private static async Task<IResult> HandleAsync(IOrderService orderService,
+                                                       string number,
+                                                       PayOrderRequest request,
+                                                       ClaimsPrincipal user)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 

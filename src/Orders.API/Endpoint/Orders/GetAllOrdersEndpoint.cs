@@ -15,11 +15,10 @@ namespace Orders.API.Endpoint.Orders
                 .WithOrder(5)
                 .Produces<PagedResponse<List<Order>?>>();
 
-        private static async Task<IResult> HandleAsync(
-            ClaimsPrincipal user,
-            IOrderRepository orderRepository,
-            [FromQuery] int pageNumber = ApplicationModule.DEFAULT_PAGE_NUMBER,
-            [FromQuery] int pageSize = ApplicationModule.DEFAULT_PAGE_SIZE)
+        private static async Task<IResult> HandleAsync(ClaimsPrincipal user,
+                                                       IOrderRepository orderRepository,
+                                                       [FromQuery] int pageNumber = ApplicationModule.DEFAULT_PAGE_NUMBER,
+                                                       [FromQuery] int pageSize = ApplicationModule.DEFAULT_PAGE_SIZE)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 

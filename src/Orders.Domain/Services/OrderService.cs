@@ -60,7 +60,6 @@ namespace Orders.Domain.Services
 
             await _orderRepository.CreateOrderAsync(order);
 
-
             return new Response<Order?>(order, 201, ResponseMessages.ORDER_CREATED_SUCCESS.GetDescription());
         }
 
@@ -89,16 +88,16 @@ namespace Orders.Domain.Services
             var result = await _stripeService.GetTransactionsByOrderNumberAsync(getTransactionByOrderNumberRequest);
 
             if (!result.IsSuccess)
-                return new Response<Order?>(null, 500, ResponseMessages.PAYMENT_NOT_FOUND.GetDescription());
+                return new Response<Order?>(null, 404, ResponseMessages.PAYMENT_NOT_FOUND.GetDescription());
 
             if (result.Data is null)
-                return new Response<Order?>(null, 500, ResponseMessages.PAYMENT_NOT_FOUND.GetDescription());
+                return new Response<Order?>(null, 404, ResponseMessages.PAYMENT_NOT_FOUND.GetDescription());
 
             if (result.Data.Any(item => item.Refunded))
-                return new Response<Order?>(null, 500, ResponseMessages.ORDER_ALREADY_REFUNDED_CANNOT_BE_PAID.GetDescription());
+                return new Response<Order?>(null, 400, ResponseMessages.ORDER_ALREADY_REFUNDED_CANNOT_BE_PAID.GetDescription());
 
             if (!result.Data.Any(item => item.Paid))
-                return new Response<Order?>(null, 500, ResponseMessages.ORDER_NOT_PAID_YET.GetDescription());
+                return new Response<Order?>(null, 400, ResponseMessages.ORDER_NOT_PAID_YET.GetDescription());
 
             order.PayStatusOrder(result.Data[0].Id);
             await _orderRepository.UpdateOrderAsync(order);

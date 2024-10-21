@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Orders.Domain.Interfaces.ExternalServices;
 using Orders.Domain.Request.Stripe;
 using Orders.Domain.Response;
@@ -11,13 +10,9 @@ using Stripe.Checkout;
 
 namespace Orders.Infrastructure.ExternalServices
 {
-    public class StripeService : IStripeService
+    public class StripeService(IOptions<StripeConfigurationSettings> stripeSettings) : IStripeService
     {
-        private readonly StripeConfigurationSettings _stripeSettings;
-        public StripeService(IOptions<StripeConfigurationSettings> stripeSettings)
-        {
-            _stripeSettings = stripeSettings.Value;
-        }
+        private readonly StripeConfigurationSettings _stripeSettings = stripeSettings.Value;
 
         public async Task<Response<StripeSessionData>> CreateSessionAsync(CreateSessionRequest request)
         {

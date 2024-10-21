@@ -13,10 +13,9 @@ namespace Orders.API.Endpoint.Orders
                 .WithOrder(6)
                 .Produces<Response<Order?>>();
 
-        private static async Task<IResult> HandleAsync(
-            ClaimsPrincipal user,
-            IOrderRepository orderRepository,
-            string number)
+        private static async Task<IResult> HandleAsync(ClaimsPrincipal user,
+                                                       IOrderRepository orderRepository,
+                                                       string number)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
