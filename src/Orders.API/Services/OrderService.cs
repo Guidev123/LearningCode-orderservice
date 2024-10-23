@@ -1,5 +1,6 @@
 ﻿using EasyNetQ;
 using Microsoft.Extensions.Options;
+using Orders.API.DTOs;
 using Orders.Domain.Entities;
 using Orders.Domain.Enums;
 using Orders.Domain.Interfaces.ExternalServices;
@@ -9,8 +10,8 @@ using Orders.Domain.Request.Orders;
 using Orders.Domain.Request.Stripe;
 using Orders.Domain.Response;
 using Orders.Domain.Response.Messages;
+using Orders.Infrastructure.MessageBus.Messages.Integration;
 using Orders.Infrastructure.Messages;
-using Orders.Infrastructure.Messages.Integration;
 
 namespace Orders.API.Services
 {
@@ -20,24 +21,19 @@ namespace Orders.API.Services
         private readonly IVoucherRepository _voucherRepository;
         private readonly IProductRepository _productRepository;
         private readonly IStripeService _stripeService;
-        private readonly BusSettings _busSettings;
-        private readonly IBus _bus;
+        private readonly IMessageBus _bus;
 
         public OrderService(IOrderRepository orderRepository,
                                   IVoucherRepository voucherRepository,
                                   IProductRepository productRepository,
                                   IStripeService stripeService,
-                                  IOptions<BusSettings> busSettings)
+                                  IMessageBus bus)
         {
             _orderRepository = orderRepository;
             _voucherRepository = voucherRepository;
             _productRepository = productRepository;
             _stripeService = stripeService;
-            _busSettings = busSettings.Value;
-            _bus = RabbitHutch.CreateBus(_busSettings.Connection, register =>
-            {
-                register.EnableNewtonsoftJson();
-            });
+            _bus = bus;
         }
 
         public async Task<Response<Order?>> CancelOrderAsync(CancelOrderRequest request)
@@ -122,9 +118,11 @@ namespace Orders.API.Services
             order.PayStatusOrder(result.Data[0].Id);
             await _orderRepository.UpdateOrderAsync(order);
 
-            // SEND MESSAGE
+            var message = await _bus.RequestAsync<UserUpdateRoleIntegrationEvent, Response<GetUserDTO>>(new
+                                                  (true, Guid.Parse(request.UserId)));
 
-            var message = await SendUpdateUserRoleMessage(new(true, Guid.Parse(request.UserId)));
+            if(!message.IsSuccess)
+               return new Response<Order?>(null, 400, ResponseMessages.PAYMENT_FAILED.GetDescription());
 
             return new Response<Order?>(order, 200, ResponseMessages.ORDER_PAID_SUCCESS.GetDescription());
         }
@@ -156,13 +154,6 @@ namespace Orders.API.Services
         }
 
         #region Utils
-
-
-        protected async Task<ResponseMessage<UserUpdateRoleIntegrationEvent>> SendUpdateUserRoleMessage(UserUpdateRoleIntegrationEvent integrationEvent)
-        {
-            var sucess = await _bus.Rpc.RequestAsync<UserUpdateRoleIntegrationEvent, ResponseMessage<UserUpdateRoleIntegrationEvent>>(integrationEvent);
-            return sucess;
-        }
 
         protected async Task<Response<Voucher?>> ValidateVoucherAsync(long? voucherId)
         {

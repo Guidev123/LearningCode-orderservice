@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Orders.Infrastructure.Messages
+namespace Orders.Infrastructure.MessageBus.Messages
 {
     public abstract class Message
     {

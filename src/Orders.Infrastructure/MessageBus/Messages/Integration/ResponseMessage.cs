@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Orders.Infrastructure.Messages.Integration
+namespace Orders.Infrastructure.MessageBus.Messages.Integration
 {
     public class ResponseMessage<TData>
     {

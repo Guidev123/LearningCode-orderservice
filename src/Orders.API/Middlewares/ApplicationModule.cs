@@ -25,6 +25,7 @@ namespace Orders.API.Middlewares
             builder.ConfigureDataBase();
             builder.AddSecurityConfig();
             builder.AddDocumentationConfig();
+            builder.AddMessageBusConfiguration();
         }
 
         public static void ResolveDependencies(this WebApplicationBuilder builder)
@@ -35,7 +36,6 @@ namespace Orders.API.Middlewares
             builder.Services.AddTransient<IProductRepository, ProductRepository>();
             builder.Services.AddTransient<IStripeService, StripeService>();
             builder.Services.Configure<StripeConfigurationSettings>(builder.Configuration.GetSection(nameof(StripeConfigurationSettings)));
-            builder.Services.Configure<BusSettings>(builder.Configuration.GetSection(nameof(BusSettings)));
         }
 
         public static void ConfigureDataBase(this WebApplicationBuilder builder) =>
