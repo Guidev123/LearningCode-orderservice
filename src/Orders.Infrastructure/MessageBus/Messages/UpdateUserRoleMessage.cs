@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Orders.Infrastructure.MessageBus
+namespace Orders.Infrastructure.MessageBus.Messages
 {
-    public class UpdateUserRoleIntegrationEvent
+    public class UpdateUserRoleMessage
     {
-        public UpdateUserRoleIntegrationEvent(Guid userId, bool isPaid)
+        public UpdateUserRoleMessage(Guid userId, bool isPaid)
         {
             UserId = userId;
             IsPaid = isPaid;

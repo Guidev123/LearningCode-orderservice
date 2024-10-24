@@ -7,8 +7,8 @@ using Orders.Domain.Interfaces.Repositories;
 using Orders.Domain.Interfaces.Services;
 using Orders.Infrastructure;
 using Orders.Infrastructure.ExternalServices;
+using Orders.Infrastructure.ExternalServices.Configuration;
 using Orders.Infrastructure.MessageBus.Configuration;
-using Orders.Infrastructure.Models;
 using Orders.Infrastructure.Persistence.Repositories;
 using System.Text;
 
@@ -25,7 +25,8 @@ namespace Orders.API.Middlewares
             builder.ConfigureDataBase();
             builder.AddSecurityConfig();
             builder.AddDocumentationConfig();
-            builder.Services.AddMessageBus();
+            builder.Services.AddMessageBus(builder.Configuration.GetSection(nameof(BusSettingsConfiguration))["Hostname"] ?? string.Empty,
+            builder.Configuration.GetSection(nameof(BusSettingsConfiguration))["ClientProvidedName"] ?? string.Empty);
         }
 
         public static void ResolveDependencies(this WebApplicationBuilder builder)
@@ -35,7 +36,8 @@ namespace Orders.API.Middlewares
             builder.Services.AddTransient<IVoucherRepository, VoucherRepository>();
             builder.Services.AddTransient<IProductRepository, ProductRepository>();
             builder.Services.AddTransient<IStripeService, StripeService>();
-            builder.Services.Configure<StripeConfigurationSettings>(builder.Configuration.GetSection(nameof(StripeConfigurationSettings)));
+            builder.Services.Configure<StripeConfiguration>(builder.Configuration.GetSection(nameof(StripeConfiguration)));
+            builder.Services.Configure<BusSettingsConfiguration>(builder.Configuration.GetSection(nameof(BusSettingsConfiguration)));
         }
 
         public static void ConfigureDataBase(this WebApplicationBuilder builder) =>

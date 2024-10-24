@@ -4,14 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Orders.Infrastructure.Models
+namespace Orders.Infrastructure.ExternalServices.Configuration
 {
-    public class StripeConfigurationSettings
+    public class StripeConfiguration
     {
         public string ApiKey { get; set; } = string.Empty;
         public string FrontendUrl { get; set; } = string.Empty;
         public string StripeMode { get; set; } = string.Empty;
         public string PaymentMethodTypes { get; set; } = string.Empty;
     }
-
 }

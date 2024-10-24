@@ -10,15 +10,15 @@ namespace Orders.Infrastructure.MessageBus.Configuration
 {
     public static class MessageBusConfiguration
     {
-        public static void AddMessageBus(this IServiceCollection services)
+        public static void AddMessageBus(this IServiceCollection services, string hostName, string clientProvidedName)
         {
             var connectionFactory = new ConnectionFactory
             {
-                HostName = "localhost",
+                HostName = hostName,
             };
 
-            var connection = connectionFactory.CreateConnection("order-service-producer");  
-            services.AddSingleton(new ProducerConnection(connection));
+            var connection = connectionFactory.CreateConnection(clientProvidedName);
+            services.AddSingleton(new ConnectionConfiguration(connection));
             services.AddSingleton<IMessageBusClient, RabbitMqClient>();
         }
     }

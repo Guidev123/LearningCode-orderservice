@@ -4,15 +4,15 @@ using Orders.Domain.Request.Stripe;
 using Orders.Domain.Response;
 using Orders.Domain.Response.Messages;
 using Orders.Domain.Response.Stripe;
-using Orders.Infrastructure.Models;
+using Orders.Infrastructure.ExternalServices.Configuration;
 using Stripe;
 using Stripe.Checkout;
 
 namespace Orders.Infrastructure.ExternalServices
 {
-    public class StripeService(IOptions<StripeConfigurationSettings> stripeSettings) : IStripeService
+    public class StripeService(IOptions<Configuration.StripeConfiguration> stripeSettings) : IStripeService
     {
-        private readonly StripeConfigurationSettings _stripeSettings = stripeSettings.Value;
+        private readonly Configuration.StripeConfiguration _stripeSettings = stripeSettings.Value;
 
         public async Task<Response<StripeSessionData>> CreateSessionAsync(CreateSessionRequest request)
         {

@@ -1,4 +1,5 @@
-﻿using Orders.Domain.Entities;
+﻿using Microsoft.Extensions.Options;
+using Orders.Domain.Entities;
 using Orders.Domain.Enums;
 using Orders.Domain.Interfaces.ExternalServices;
 using Orders.Domain.Interfaces.Repositories;
@@ -8,6 +9,8 @@ using Orders.Domain.Request.Stripe;
 using Orders.Domain.Response;
 using Orders.Domain.Response.Messages;
 using Orders.Infrastructure.MessageBus;
+using Orders.Infrastructure.MessageBus.Configuration;
+using Orders.Infrastructure.MessageBus.Messages;
 
 namespace Orders.API.Services
 {
@@ -18,17 +21,20 @@ namespace Orders.API.Services
         private readonly IProductRepository _productRepository;
         private readonly IStripeService _stripeService;
         private readonly IMessageBusClient _bus;
+        private readonly BusSettingsConfiguration _busSettings;
         public OrderService(IOrderRepository orderRepository,
                                   IVoucherRepository voucherRepository,
                                   IProductRepository productRepository,
                                   IStripeService stripeService,
-                                  IMessageBusClient bus)
+                                  IMessageBusClient bus,
+                                  IOptions<BusSettingsConfiguration> busSettings)
         {
             _orderRepository = orderRepository;
             _voucherRepository = voucherRepository;
             _productRepository = productRepository;
             _stripeService = stripeService;
             _bus = bus;
+            _busSettings = busSettings.Value;
         }
 
         public async Task<Response<Order?>> CancelOrderAsync(CancelOrderRequest request)
@@ -113,9 +119,7 @@ namespace Orders.API.Services
             order.PayStatusOrder(result.Data[0].Id);
             await _orderRepository.UpdateOrderAsync(order);
 
-            // msg
-            _bus.Publish(new UpdateUserRoleIntegrationEvent(Guid.Parse(request.UserId), true), "set-user-premium", "order-service");
-
+            _bus.Publish(new UpdateUserRoleMessage(Guid.Parse(request.UserId), true), _busSettings.RoutingKey, _busSettings.Exchange);
 
             return new Response<Order?>(order, 200, ResponseMessages.ORDER_PAID_SUCCESS.GetDescription());
         }
