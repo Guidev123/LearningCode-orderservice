@@ -7,7 +7,7 @@ using Orders.Domain.Interfaces.Repositories;
 using Orders.Domain.Interfaces.Services;
 using Orders.Infrastructure;
 using Orders.Infrastructure.ExternalServices;
-using Orders.Infrastructure.Messages;
+using Orders.Infrastructure.MessageBus.Configuration;
 using Orders.Infrastructure.Models;
 using Orders.Infrastructure.Persistence.Repositories;
 using System.Text;
@@ -25,7 +25,7 @@ namespace Orders.API.Middlewares
             builder.ConfigureDataBase();
             builder.AddSecurityConfig();
             builder.AddDocumentationConfig();
-            builder.AddMessageBusConfiguration();
+            builder.Services.AddMessageBus();
         }
 
         public static void ResolveDependencies(this WebApplicationBuilder builder)
@@ -72,6 +72,7 @@ namespace Orders.API.Middlewares
             app.UseSwaggerUI();
             app.MapSwagger().RequireAuthorization();
         }
+
         public static void UseSecurity(this WebApplication app)
         {
             app.UseAuthentication();

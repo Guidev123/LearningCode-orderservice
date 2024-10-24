@@ -1,7 +1,4 @@
-﻿using EasyNetQ;
-using Microsoft.Extensions.Options;
-using Orders.API.DTOs;
-using Orders.Domain.Entities;
+﻿using Orders.Domain.Entities;
 using Orders.Domain.Enums;
 using Orders.Domain.Interfaces.ExternalServices;
 using Orders.Domain.Interfaces.Repositories;
@@ -10,8 +7,7 @@ using Orders.Domain.Request.Orders;
 using Orders.Domain.Request.Stripe;
 using Orders.Domain.Response;
 using Orders.Domain.Response.Messages;
-using Orders.Infrastructure.MessageBus.Messages.Integration;
-using Orders.Infrastructure.Messages;
+using Orders.Infrastructure.MessageBus;
 
 namespace Orders.API.Services
 {
@@ -21,13 +17,12 @@ namespace Orders.API.Services
         private readonly IVoucherRepository _voucherRepository;
         private readonly IProductRepository _productRepository;
         private readonly IStripeService _stripeService;
-        private readonly IMessageBus _bus;
-
+        private readonly IMessageBusClient _bus;
         public OrderService(IOrderRepository orderRepository,
                                   IVoucherRepository voucherRepository,
                                   IProductRepository productRepository,
                                   IStripeService stripeService,
-                                  IMessageBus bus)
+                                  IMessageBusClient bus)
         {
             _orderRepository = orderRepository;
             _voucherRepository = voucherRepository;
@@ -118,11 +113,9 @@ namespace Orders.API.Services
             order.PayStatusOrder(result.Data[0].Id);
             await _orderRepository.UpdateOrderAsync(order);
 
-            var message = await _bus.RequestAsync<UserUpdateRoleIntegrationEvent, Response<GetUserDTO>>(new
-                                                  (true, Guid.Parse(request.UserId)));
+            // msg
+            _bus.Publish(new UpdateUserRoleIntegrationEvent(Guid.Parse(request.UserId), true), "set-user-premium", "order-service");
 
-            if(!message.IsSuccess)
-               return new Response<Order?>(null, 400, ResponseMessages.PAYMENT_FAILED.GetDescription());
 
             return new Response<Order?>(order, 200, ResponseMessages.ORDER_PAID_SUCCESS.GetDescription());
         }
