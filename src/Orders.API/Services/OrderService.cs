@@ -14,32 +14,20 @@ using Orders.Infrastructure.MessageBus.Messages;
 
 namespace Orders.API.Services
 {
-    public class OrderService : IOrderService
+    public class OrderService(
+        IOrderRepository orderRepository,
+        IVoucherRepository voucherRepository,
+        IProductRepository productRepository,
+        IStripeService stripeService,
+        IMessageBusClient bus,
+        IOptions<BusSettingsConfiguration> busSettings)
+        : IOrderService
     {
-        private readonly IOrderRepository _orderRepository;
-        private readonly IVoucherRepository _voucherRepository;
-        private readonly IProductRepository _productRepository;
-        private readonly IStripeService _stripeService;
-        private readonly IMessageBusClient _bus;
-        private readonly BusSettingsConfiguration _busSettings;
-        public OrderService(IOrderRepository orderRepository,
-                                  IVoucherRepository voucherRepository,
-                                  IProductRepository productRepository,
-                                  IStripeService stripeService,
-                                  IMessageBusClient bus,
-                                  IOptions<BusSettingsConfiguration> busSettings)
-        {
-            _orderRepository = orderRepository;
-            _voucherRepository = voucherRepository;
-            _productRepository = productRepository;
-            _stripeService = stripeService;
-            _bus = bus;
-            _busSettings = busSettings.Value;
-        }
+        private readonly BusSettingsConfiguration _busSettings = busSettings.Value;
 
         public async Task<Response<Order?>> CancelOrderAsync(CancelOrderRequest request)
         {
-            var order = await _orderRepository.GetOrderByIdAsync(request.Id, request.UserId);
+            var order = await orderRepository.GetOrderByIdAsync(request.Id, request.UserId);
             if (order is null)
                 return new Response<Order?>(null, 404, ResponseMessages.ORDER_NOT_FOUND.GetDescription());
 
@@ -58,13 +46,13 @@ namespace Orders.API.Services
             }
 
             order.CancellStatusOrder();
-            await _orderRepository.UpdateOrderAsync(order);
+            await orderRepository.UpdateOrderAsync(order);
             return new Response<Order?>(order, 200, ResponseMessages.ORDER_CANCELED_SUCCESS.GetDescription());
         }
 
         public async Task<Response<Order?>> CreateOrderAsync(CreateOrderRequest request)
         {
-            var orderProduct = await _productRepository.GetProductByIdAsync(request.ProductId);
+            var orderProduct = await productRepository.GetProductByIdAsync(request.ProductId);
             if (orderProduct is null)
                 return new Response<Order?>(null, 404, ResponseMessages.ORDER_NOT_FOUND.GetDescription());
 
@@ -75,14 +63,14 @@ namespace Orders.API.Services
             var order = new Order(request.UserId,request.ProductId, orderProduct,
                                   orderProduct.Price - (voucher.Data?.Amount ?? 0), voucher.Data, request.VoucherId);
 
-            await _orderRepository.CreateOrderAsync(order);
+            await orderRepository.CreateOrderAsync(order);
 
             return new Response<Order?>(order, 201, ResponseMessages.ORDER_CREATED_SUCCESS.GetDescription());
         }
 
         public async Task<Response<Order?>> PayOrderAsync(PayOrderRequest request)
         {
-            var order = await _orderRepository.GetOrderByIdAsync(request.OrderId, request.UserId);
+            var order = await orderRepository.GetOrderByIdAsync(request.OrderId, request.UserId);
             if (order is null)
                 return new Response<Order?>(null, 404, ResponseMessages.ORDER_NOT_FOUND.GetDescription());
 
@@ -100,9 +88,7 @@ namespace Orders.API.Services
                     return new Response<Order?>(order, 400, ResponseMessages.ORDER_CANNOT_BE_PAID.GetDescription());
             }
 
-            var getTransactionByOrderNumberRequest = new GetTransactionByOrderNumberRequest(order.Number ?? string.Empty);
-
-            var result = await _stripeService.GetTransactionsByOrderNumberAsync(getTransactionByOrderNumberRequest);
+            var result = await stripeService.GetTransactionsByOrderNumberAsync(new(order.Number ?? string.Empty));
 
             if (!result.IsSuccess)
                 return new Response<Order?>(null, 404, ResponseMessages.PAYMENT_NOT_FOUND.GetDescription());
@@ -117,16 +103,16 @@ namespace Orders.API.Services
                 return new Response<Order?>(null, 400, ResponseMessages.ORDER_NOT_PAID_YET.GetDescription());
 
             order.PayStatusOrder(result.Data[0].Id);
-            await _orderRepository.UpdateOrderAsync(order);
+            await orderRepository.UpdateOrderAsync(order);
 
-            _bus.Publish(new UpdateUserRoleMessage(Guid.Parse(request.UserId), true), _busSettings.RoutingKey, _busSettings.Exchange);
+            bus.Publish(new UpdateUserRoleMessage(Guid.Parse(request.UserId), true), _busSettings.RoutingKey, _busSettings.Exchange);
 
             return new Response<Order?>(order, 200, ResponseMessages.ORDER_PAID_SUCCESS.GetDescription());
         }
 
         public async Task<Response<Order?>> RefundOrderAsync(RefundOrderRequest request)
         {
-            var order = await _orderRepository.GetOrderByIdAsync(request.Id, request.UserId);
+            var order = await orderRepository.GetOrderByIdAsync(request.Id, request.UserId);
             if (order is null)
                 return new Response<Order?>(null, 404, ResponseMessages.ORDER_NOT_FOUND.GetDescription());
 
@@ -145,7 +131,7 @@ namespace Orders.API.Services
             }
 
             order.RefundStatusOrder();
-            await _orderRepository.UpdateOrderAsync(order);
+            await orderRepository.UpdateOrderAsync(order);
 
             return new Response<Order?>(order, 200, ResponseMessages.ORDER_REFUNDED_SUCCESS.GetDescription());
         }
@@ -158,7 +144,7 @@ namespace Orders.API.Services
             if (voucherId is null)
                 return new Response<Voucher?>(null, 200);
 
-            var voucher = await _voucherRepository.GetVoucherByIdAsync(voucherId);
+            var voucher = await voucherRepository.GetVoucherByIdAsync(voucherId);
 
             if (voucher is null)
                 return new Response<Voucher?>(null, 404, ResponseMessages.VOUCHER_NOT_FOUND.GetDescription());
@@ -167,7 +153,7 @@ namespace Orders.API.Services
                 return new Response<Voucher?>(null, 400, ResponseMessages.VOUCHER_INACTIVE.GetDescription());
 
             voucher.SetVoucherAsUsed();
-            await _voucherRepository.UpdateVoucherAsync(voucher);
+            await voucherRepository.UpdateVoucherAsync(voucher);
 
             return new Response<Voucher?>(voucher, 200);
         }

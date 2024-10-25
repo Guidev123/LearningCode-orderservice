@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Orders.Domain.Response.Stripe
+namespace Orders.Domain.Response
 {
-    public class StripeTransactionData
+    public class StripeTransactionResponse
     {
-        public StripeTransactionData(string id, string email, long amount, long amountCaptured, string status, bool paid, bool refunded)
+        public StripeTransactionResponse(string id, string email, long amount, long amountCaptured, string status, bool paid, bool refunded)
         {
             Id = id;
             Email = email;
@@ -19,11 +19,11 @@ namespace Orders.Domain.Response.Stripe
             Refunded = refunded;
         }
 
-        public string Id { get; private set; } 
-        public string Email { get; private set; }
+        public string Id { get; private set; }
+        public string Email { get; private set; } 
         public long Amount { get; private set; }
         public long AmountCaptured { get; private set; }
-        public string Status { get; private set; }
+        public string Status { get; private set; } 
         public bool Paid { get; private set; }
         public bool Refunded { get; private set; }
     }

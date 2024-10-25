@@ -9,7 +9,8 @@ namespace Orders.Domain.Request.Stripe
 {
     public class CreateSessionRequest
     {
-        public CreateSessionRequest(string userEmail, string userId, string orderNumber, string productTitle, string productDescription, int orderTotal)
+        public CreateSessionRequest(string userEmail, string userId, string orderNumber,
+                                    string productTitle, string productDescription, long orderTotal)
         {
             UserEmail = userEmail;
             UserId = userId;
@@ -26,6 +27,6 @@ namespace Orders.Domain.Request.Stripe
         public string OrderNumber { get; private set; }
         public string ProductTitle { get; private set; }
         public string ProductDescription { get; private set; }
-        public int OrderTotal { get; private set; }
+        public long OrderTotal { get; private set; }
     }
 }

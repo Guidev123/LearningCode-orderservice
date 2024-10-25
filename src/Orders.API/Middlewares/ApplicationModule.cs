@@ -29,7 +29,7 @@ namespace Orders.API.Middlewares
             builder.Configuration.GetSection(nameof(BusSettingsConfiguration))["ClientProvidedName"] ?? string.Empty);
         }
 
-        public static void ResolveDependencies(this WebApplicationBuilder builder)
+        private static void ResolveDependencies(this WebApplicationBuilder builder)
         {
             builder.Services.AddTransient<IOrderService, OrderService>();
             builder.Services.AddTransient<IOrderRepository, OrderRepository>();
@@ -40,10 +40,10 @@ namespace Orders.API.Middlewares
             builder.Services.Configure<BusSettingsConfiguration>(builder.Configuration.GetSection(nameof(BusSettingsConfiguration)));
         }
 
-        public static void ConfigureDataBase(this WebApplicationBuilder builder) =>
+        private static void ConfigureDataBase(this WebApplicationBuilder builder) =>
             builder.Services.AddDbContext<OrdersDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ?? string.Empty));
 
-        public static void AddSecurityConfig(this WebApplicationBuilder builder)
+        private static void AddSecurityConfig(this WebApplicationBuilder builder)
         {
             builder.Services.AddAuthentication(options =>
             {
