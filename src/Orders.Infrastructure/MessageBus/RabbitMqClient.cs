@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Orders.Domain.Interfaces.MessageBus;
 using Orders.Infrastructure.MessageBus.Configuration;
 using RabbitMQ.Client;
 using System;

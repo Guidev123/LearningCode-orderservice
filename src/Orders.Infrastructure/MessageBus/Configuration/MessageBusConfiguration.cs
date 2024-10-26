@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Orders.Domain.Interfaces.MessageBus;
 using RabbitMQ.Client;
 
 namespace Orders.Infrastructure.MessageBus.Configuration

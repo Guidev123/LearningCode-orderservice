@@ -2,13 +2,12 @@
 using Orders.Domain.Entities;
 using Orders.Domain.Enums;
 using Orders.Domain.Interfaces.ExternalServices;
+using Orders.Domain.Interfaces.MessageBus;
 using Orders.Domain.Interfaces.Repositories;
 using Orders.Domain.Interfaces.Services;
 using Orders.Domain.Request.Orders;
-using Orders.Domain.Request.Stripe;
 using Orders.Domain.Response;
 using Orders.Domain.Response.Messages;
-using Orders.Infrastructure.MessageBus;
 using Orders.Infrastructure.MessageBus.Configuration;
 using Orders.Infrastructure.MessageBus.Messages;
 
