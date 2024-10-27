@@ -1,13 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Orders.Domain.Interfaces.MessageBus;
 using Orders.Infrastructure.MessageBus.Configuration;
 using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Orders.Infrastructure.MessageBus
 {

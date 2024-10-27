@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Orders.API.Middlewares;
+using Orders.Application.DTOs;
+using Orders.Application.Queries.GetAllOrders;
+using Orders.Application.Queries.GetAllProducts;
+using Orders.Application.Response;
 using Orders.Domain.Entities;
-using Orders.Domain.Interfaces.Repositories;
-using Orders.Domain.Request.Products;
-using Orders.Domain.Response;
+using Orders.Domain.Repositories;
+using System.Security.Claims;
 
 namespace Orders.API.Endpoint.Products
 {
@@ -12,16 +16,16 @@ namespace Orders.API.Endpoint.Products
         public static void Map(IEndpointRouteBuilder app)
             => app.MapGet("/", HandleAsync)
                 .WithOrder(1)
-                .Produces<PagedResponse<List<Product>?>>();
+                .Produces<PagedResponse<List<ProductDTO>?>>();
 
-        private static async Task<IResult> HandleAsync(
-            IProductRepository productRepository,
-            [FromQuery] int pageNumber = ApplicationModule.DEFAULT_PAGE_NUMBER,
-            [FromQuery] int pageSize = ApplicationModule.DEFAULT_PAGE_SIZE)
+        private static async Task<IResult> HandleAsync(IMediator mediator,
+                                                       ClaimsPrincipal user,
+                                                       [FromQuery] int pageNumber = ApplicationModule.DEFAULT_PAGE_NUMBER,
+                                                       [FromQuery] int pageSize = ApplicationModule.DEFAULT_PAGE_SIZE)
         {
-            var request = new GetAllProductsRequest(pageNumber, pageSize);
+            var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var result = await productRepository.GetAllProductsAsync(request);
+            var result = await mediator.Send(new GetAllProductsQuery(pageNumber, pageSize));
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result.Data);

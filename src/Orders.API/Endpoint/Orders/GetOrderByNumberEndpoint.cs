@@ -1,7 +1,7 @@
-﻿using Orders.Domain.Entities;
-using Orders.Domain.Interfaces.Repositories;
-using Orders.Domain.Request.Orders;
-using Orders.Domain.Response;
+﻿using MediatR;
+using Orders.Application.DTOs;
+using Orders.Application.Queries.GetOrderByNumber;
+using Orders.Application.Response;
 using System.Security.Claims;
 
 namespace Orders.API.Endpoint.Orders
@@ -11,17 +11,15 @@ namespace Orders.API.Endpoint.Orders
         public static void Map(IEndpointRouteBuilder app)
             => app.MapGet("/{number}", HandleAsync)
                 .WithOrder(6)
-                .Produces<Response<Order?>>();
+                .Produces<Response<OrderDTO?>>();
 
         private static async Task<IResult> HandleAsync(ClaimsPrincipal user,
-                                                       IOrderRepository orderRepository,
+                                                       IMediator mediator,
                                                        string number)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var request = new GetOrderByNumberRequest(number, userIdClaim?.Value ?? string.Empty);
-
-            var result = await orderRepository.GetOrderByNumberAsync(request);
+            var result = await mediator.Send(new GetOrderByNumberQuery(number, userIdClaim!.Value));
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

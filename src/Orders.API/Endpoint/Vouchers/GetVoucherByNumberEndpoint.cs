@@ -1,7 +1,9 @@
-﻿using Orders.Domain.Entities;
-using Orders.Domain.Interfaces.Repositories;
-using Orders.Domain.Request.Vouchers;
-using Orders.Domain.Response;
+﻿using MediatR;
+using Orders.Application.DTOs;
+using Orders.Application.Queries.GetVoucherByNumber;
+using Orders.Application.Response;
+using Orders.Domain.Entities;
+using Orders.Domain.Repositories;
 
 namespace Orders.API.Endpoint.Vouchers
 {
@@ -10,16 +12,12 @@ namespace Orders.API.Endpoint.Vouchers
         public static void Map(IEndpointRouteBuilder app)
             => app.MapGet("/{number}", HandleAsync)
                 .WithOrder(4)
-                .Produces<Response<Voucher?>>();
+                .Produces<Response<VoucherDTO?>>();
 
-        private static async Task<IResult> HandleAsync(
-            IVoucherRepository voucherRepository,
-            string number)
+        private static async Task<IResult> HandleAsync(IMediator mediator,
+                                                       string number)
         {
-            var request = new GetVoucherByNumberRequest(number);
-
-            var result = await voucherRepository.GetVoucherByNumberAsync(request);
-
+            var result = await mediator.Send(new GetVoucherByNumberQuery(number));
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

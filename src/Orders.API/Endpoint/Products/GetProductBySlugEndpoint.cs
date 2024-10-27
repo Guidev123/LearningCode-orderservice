@@ -1,7 +1,8 @@
-﻿using Orders.Domain.Entities;
-using Orders.Domain.Interfaces.Repositories;
-using Orders.Domain.Request.Products;
-using Orders.Domain.Response;
+﻿using MediatR;
+using Orders.Application.DTOs;
+using Orders.Application.Queries.GetProductBySlug;
+using Orders.Application.Response;
+using Orders.Domain.Repositories;
 
 namespace Orders.API.Endpoint.Products
 {
@@ -10,15 +11,13 @@ namespace Orders.API.Endpoint.Products
         public static void Map(IEndpointRouteBuilder app)
             => app.MapGet("/{slug}", HandleAsync)
                 .WithOrder(4)
-                .Produces<Response<Product?>>();
+                .Produces<Response<ProductDTO?>>();
 
-        private static async Task<IResult> HandleAsync(
-            IProductRepository productRepository,
-            string slug)
+        private static async Task<IResult> HandleAsync(IMediator mediator,
+                                                       string slug)
         {
-            var request = new GetProductBySlugRequest(slug);
 
-            var result = await productRepository.GetProductBySlugAsync(request);
+            var result = await mediator.Send(new GetProductBySlugQuery(slug));
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

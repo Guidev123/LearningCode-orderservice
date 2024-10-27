@@ -1,7 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Orders.Domain.Interfaces.ExternalServices;
-using Orders.Domain.Request.Stripe;
-using Orders.Domain.Response;
+﻿using MediatR;
+using Orders.Application.Commands.CreateSession;
+using Orders.Application.Response;
 using System.Security.Claims;
 
 namespace Orders.API.Endpoint.Stripe
@@ -13,17 +12,14 @@ namespace Orders.API.Endpoint.Stripe
                 .Produces<Response<string?>>();
 
         private static async Task<IResult> HandleAsync(ClaimsPrincipal user,
-                                                       IStripeService stripeService,
-                                                       CreateSessionRequest request)
+                                                       CreateSessionCommand command,
+                                                       IMediator mediator)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
             var userEmailClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
 
-            var session = new CreateSessionRequest(userEmailClaim?.Value ?? string.Empty, userIdClaim?.Value ?? string.Empty,
-                                                   request.OrderNumber, request.ProductTitle, request.ProductDescription,
-                                                   request.OrderTotal);
-
-            var result = await stripeService.CreateSessionAsync(session);
+            var result = await mediator.Send(new CreateSessionCommand(userEmailClaim!.Value, userIdClaim!.Value, command.OrderNumber,
+                                                                      command.ProductTitle, command.ProductDescription, command.OrderTotal));
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

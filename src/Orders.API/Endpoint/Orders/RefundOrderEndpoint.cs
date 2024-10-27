@@ -1,7 +1,8 @@
-﻿using Orders.Domain.Entities;
-using Orders.Domain.Interfaces.Services;
-using Orders.Domain.Request.Orders;
-using Orders.Domain.Response;
+﻿using MediatR;
+using Orders.Application.Commands.RefundOrder;
+using Orders.Application.DTOs;
+using Orders.Application.Response;
+using Orders.Domain.Entities;
 using System.Security.Claims;
 
 namespace Orders.API.Endpoint.Orders
@@ -11,17 +12,15 @@ namespace Orders.API.Endpoint.Orders
         public static void Map(IEndpointRouteBuilder app)
             => app.MapPost("/{id}/refund", HandleAsync)
                 .WithOrder(4)
-                .Produces<Response<Order?>>();
+                .Produces<Response<OrderDTO?>>();
 
-        private static async Task<IResult> HandleAsync(IOrderService orderService,
+        private static async Task<IResult> HandleAsync(IMediator mediator,
                                                        long id,
                                                        ClaimsPrincipal user)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var request = new RefundOrderRequest(id, userIdClaim?.Value ?? string.Empty);
-
-            var result = await orderService.RefundOrderAsync(request);
+            var result = await mediator.Send(new RefundOrderCommand(id, userIdClaim!.Value));
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Orders.API.Services;
-using Orders.Domain.Interfaces.ExternalServices;
-using Orders.Domain.Interfaces.Repositories;
-using Orders.Domain.Interfaces.Services;
-using Orders.Infrastructure;
+using Orders.Application.Commands.CreateOrder;
+using Orders.Domain.Repositories;
+using Orders.Infrastructure.Data;
+using Orders.Infrastructure.Data.Persistence.Repositories;
 using Orders.Infrastructure.ExternalServices;
 using Orders.Infrastructure.ExternalServices.Configuration;
 using Orders.Infrastructure.MessageBus.Configuration;
-using Orders.Infrastructure.Persistence.Repositories;
 using System.Text;
 
 namespace Orders.API.Middlewares
@@ -31,11 +29,11 @@ namespace Orders.API.Middlewares
 
         private static void ResolveDependencies(this WebApplicationBuilder builder)
         {
-            builder.Services.AddTransient<IOrderService, OrderService>();
             builder.Services.AddTransient<IOrderRepository, OrderRepository>();
             builder.Services.AddTransient<IVoucherRepository, VoucherRepository>();
             builder.Services.AddTransient<IProductRepository, ProductRepository>();
             builder.Services.AddTransient<IStripeService, StripeService>();
+            builder.Services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<CreateOrderCommand>());
             builder.Services.Configure<StripeConfiguration>(builder.Configuration.GetSection(nameof(StripeConfiguration)));
             builder.Services.Configure<BusSettingsConfiguration>(builder.Configuration.GetSection(nameof(BusSettingsConfiguration)));
         }

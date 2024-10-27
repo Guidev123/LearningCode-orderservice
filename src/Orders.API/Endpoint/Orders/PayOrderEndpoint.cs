@@ -1,7 +1,7 @@
-﻿using Orders.Domain.Entities;
-using Orders.Domain.Interfaces.Services;
-using Orders.Domain.Request.Orders;
-using Orders.Domain.Response;
+﻿using MediatR;
+using Orders.Application.Commands.PayOrder;
+using Orders.Application.DTOs;
+using Orders.Application.Response;
 using System.Security.Claims;
 
 namespace Orders.API.Endpoint.Orders
@@ -11,18 +11,15 @@ namespace Orders.API.Endpoint.Orders
         public static void Map(IEndpointRouteBuilder app)
             => app.MapPost("/{number}/pay", HandleAsync)
                 .WithOrder(3)
-                .Produces<Response<Order?>>();
+                .Produces<Response<OrderDTO?>>();
 
-        private static async Task<IResult> HandleAsync(IOrderService orderService,
+        private static async Task<IResult> HandleAsync(IMediator mediator,
                                                        string number,
-                                                       PayOrderRequest request,
                                                        ClaimsPrincipal user)
         {
             var userIdClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-            var order = new PayOrderRequest(userIdClaim?.Value ?? string.Empty, number, request.OrderId);
-
-            var result = await orderService.PayOrderAsync(order);
+            var result = await mediator.Send(new PayOrderCommand(userIdClaim!.Value, number));
             return result.IsSuccess
                 ? TypedResults.Ok(result)
                 : TypedResults.BadRequest(result);

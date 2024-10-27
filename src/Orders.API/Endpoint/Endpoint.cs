@@ -2,7 +2,6 @@
 using Orders.API.Endpoint.Products;
 using Orders.API.Endpoint.Stripe;
 using Orders.API.Endpoint.Vouchers;
-using Orders.Domain.Request.Stripe;
 
 namespace Orders.API.Endpoint
 {
@@ -13,7 +12,7 @@ namespace Orders.API.Endpoint
             var endpoints = app
                 .MapGroup("");
 
-            endpoints.MapGroup("api/orders")
+            endpoints.MapGroup("api/v1/orders")
                 .WithTags("Orders")
                 .RequireAuthorization()
                 .MapEndpoint<CancelOrderEndpoint>()
@@ -23,18 +22,18 @@ namespace Orders.API.Endpoint
                 .MapEndpoint<PayOrderEndpoint>()
                 .MapEndpoint<RefundOrderEndpoint>();
 
-            endpoints.MapGroup("api/vouchers")
+            endpoints.MapGroup("api/v1/vouchers")
                .WithTags("Vouchers")
                .RequireAuthorization()
                .MapEndpoint<GetVoucherByNumberEndpoint>();
 
-            endpoints.MapGroup("api/products")
+            endpoints.MapGroup("api/v1/products")
                .WithTags("Products")
                .RequireAuthorization()
                .MapEndpoint<GetAllProductsEndpoint>()
                .MapEndpoint<GetProductBySlugEndpoint>();
 
-            endpoints.MapGroup("api/payments")
+            endpoints.MapGroup("api/v1/payments")
                .WithTags("Payments")
                .RequireAuthorization()
                .MapEndpoint<GetTransactionsByOrderNumberEndpoint>()

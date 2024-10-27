@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using Orders.Domain.Interfaces.ExternalServices;
-using Orders.Domain.Request.Stripe;
-using Orders.Domain.Response;
-using Orders.Domain.Response.Messages;
+﻿using Azure;
+using Microsoft.Extensions.Options;
+using Orders.Infrastructure.DTOs;
 using Stripe;
 using Stripe.Checkout;
 
@@ -12,28 +10,26 @@ namespace Orders.Infrastructure.ExternalServices
     {
         private readonly Configuration.StripeConfiguration _stripeSettings = stripeSettings.Value;
 
-        public async Task<Response<string?>> CreateSessionAsync(CreateSessionRequest request)
+        public async Task<string?> CreateSessionAsync(CreateSessionDTO request)
         {
-            try
+            var client = new StripeClient(_stripeSettings.ApiKey);
+
+            var options = new SessionCreateOptions
             {
-                var client = new StripeClient(_stripeSettings.ApiKey);
+                CustomerEmail = request.UserEmail,
+                ClientReferenceId = request.UserId,
 
-                var options = new SessionCreateOptions
+                PaymentIntentData = new SessionPaymentIntentDataOptions
                 {
-                    CustomerEmail = request.UserEmail,
-                    ClientReferenceId = request.UserId,
-
-                    PaymentIntentData = new SessionPaymentIntentDataOptions
-                    {
-                        Metadata = new Dictionary<string, string>
+                    Metadata = new Dictionary<string, string>
                         {
                             { "order", request.OrderNumber }
                         }
-                    },
-                    PaymentMethodTypes = [_stripeSettings.PaymentMethodTypes],
-                    LineItems =
-                    [
-                        new SessionLineItemOptions
+                },
+                PaymentMethodTypes = [_stripeSettings.PaymentMethodTypes],
+                LineItems =
+                [
+                    new SessionLineItemOptions
                         {
                             PriceData = new SessionLineItemPriceDataOptions
                             {
@@ -47,53 +43,42 @@ namespace Orders.Infrastructure.ExternalServices
                             },
                             Quantity = 1
                         }
-                    ],
-                    Mode = _stripeSettings.StripeMode,
-                    SuccessUrl = $"{_stripeSettings.FrontendUrl}/orders/{request.OrderNumber}/confirm",
-                    CancelUrl = $"{_stripeSettings.FrontendUrl}/orders/{request.OrderNumber}/cancel",
-                };
+                ],
+                Mode = _stripeSettings.StripeMode,
+                SuccessUrl = $"{_stripeSettings.FrontendUrl}/orders/{request.OrderNumber}/confirm",
+                CancelUrl = $"{_stripeSettings.FrontendUrl}/orders/{request.OrderNumber}/cancel",
+            };
 
-                var service = new SessionService(client);
-                var session = await service.CreateAsync(options);
+            var service = new SessionService(client);
+            var session = await service.CreateAsync(options);
 
-                return new Response<string?>(session.Id, 200, ResponseMessages.SESSION_CREATED.GetDescription());
-            }
+            return session.Id;
 
-            catch (Exception ex)
-            {
-                return new Response<string?>(null, 400, ex.Message);
-            }
         }
 
-        public async Task<Response<List<StripeTransactionResponse>>> GetTransactionsByOrderNumberAsync(GetTransactionByOrderNumberRequest request)
+        public async Task<List<StripeTransactionDTO>> GetTransactionsByOrderNumberAsync(string number)
         {
-            try
+            var client = new StripeClient(_stripeSettings.ApiKey);
+
+            var options = new ChargeSearchOptions
             {
-                var options = new ChargeSearchOptions
-                {
-                    Query = $"metadata['order']:'{request.Number}'",
-                };
+                Query = $"metadata['order']:'{number}'",
+            };
 
-                var service = new ChargeService();
-                var result = await service.SearchAsync(options);
+            var service = new ChargeService(client);
+            var result = await service.SearchAsync(options);
 
-                if (result.Data.Count == 0)
-                    return new Response<List<StripeTransactionResponse>>(null, 404, ResponseMessages.TRANSACTION_NOT_FOUND.GetDescription());
+            if (result.Data.Count == 0)
+                return [];
 
-                var data = new List<StripeTransactionResponse>();
-                foreach (var item in result.Data)
-                {
-                    data.Add(new StripeTransactionResponse(item.Id, item.BillingDetails.Email, item.Amount,
-                                                       item.AmountCaptured, item.Status, item.Paid, item.Refunded));
-                }
-
-                return new Response<List<StripeTransactionResponse>>(data, 200, ResponseMessages.TRANSACTION_RETRIEVED_SUCCESS.GetDescription());
+            var data = new List<StripeTransactionDTO>();
+            foreach (var item in result.Data)
+            {
+                data.Add(new StripeTransactionDTO(item.Id, item.BillingDetails.Email, item.Amount,
+                                                   item.AmountCaptured, item.Status, item.Paid, item.Refunded));
             }
 
-            catch (Exception ex)
-            {
-                return new Response<List<StripeTransactionResponse>>(null, 400, ex.Message);
-            }
+            return data;
         }
     }
 }
