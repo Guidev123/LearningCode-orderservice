@@ -29,7 +29,6 @@ namespace Orders.API.Endpoint
 
             endpoints.MapGroup("api/v1/products")
                .WithTags("Products")
-               .RequireAuthorization()
                .MapEndpoint<GetAllProductsEndpoint>()
                .MapEndpoint<GetProductBySlugEndpoint>();
 
