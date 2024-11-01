@@ -1,118 +1,76 @@
- <h1 align="center">Microsserviço de Pedidos</h1>
-    <p align="center">
-        Este projeto é um microsserviço responsável pela gestão de pedidos, com integração ao Stripe para processamento de pagamentos. O sistema é estruturado em três camadas: API, Domain e Infrastructure.
-       <img  src="https://github.com/user-attachments/assets/6cbf6f1d-1778-4491-9a2c-f19af758179b" />
+<body>
+    <h1>Learning Code - API de Orders 🛒</h1>
 
-  </p>
+   <p>Esta API faz parte do microsserviço <strong>Learning Code</strong>, um software de e-learning. Ela é responsável pelas operações de pedidos de produtos e assinaturas, integrando-se com o <strong>gateway de pagamento Stripe</strong> para criar sessões de checkout. Quando o usuário compra uma assinatura e o pagamento é confirmado no Stripe, a API de pedidos envia uma mensagem via <strong>RabbitMQ</strong> para a API de usuários, solicitando a atualização da <code>Role</code> do usuário.</p>
 
-<div align="center">
-   <h2>Estrutura do Projeto</h2>
-   <img  src="https://github.com/user-attachments/assets/dd77efd6-e6c5-4c73-86ca-09d98ac1f5b9" />
-</div>
+   <h2>Segurança 👮‍♂️</h2>
+    <p>A segurança foi uma prioridade máxima no desenvolvimento desta API. Utilizamos as melhores práticas de segurança, incluindo a autenticação via <strong>JWT</strong> para garantir que apenas usuários autenticados possam acessar os endpoints.</p>
 
-<hr/>
-
-  <h3 align="center">Camada API</h3>
-    <p align="center">
-        Esta camada é responsável pelos endpoints e middlewares.
-    </p>
-
-   <h4>Endpoints</h4>
+   <h2>Arquitetura</h2>
+    <p>A arquitetura da API foi projetada seguindo rigorosamente a <strong>Arquitetura Cebola (Onion Architecture)</strong>, com as camadas:</p>
     <ul>
-        <li><strong>Pedidos</strong>
-            <ul>
-                <li><code>POST /orders/cancel</code> - Cancela um pedido.</li>
-                <li><code>POST /orders</code> - Cria um novo pedido.</li>
-                <li><code>GET /orders</code> - Obtém todos os pedidos com paginação.</li>
-                <li><code>GET /orders/{orderNumber}</code> - Obtém um pedido pelo número.</li>
-                <li><code>POST /orders/{orderId}/pay</code> - Realiza o pagamento de um pedido.</li>
-                <li><code>POST /orders/{orderId}/refund</code> - Solicita o reembolso de um pedido.</li>
-            </ul>
-        </li>
-        <li><strong>Payments</strong>
-            <ul>
-                <li><code>GET /payments/{number}/transactions</code> - Obtem a transação do stripe pelo numero do pedido.</li>
-                <li><code>POST /payments/session</code> - Cria sessão no stripe.</li>
-            </ul>
-        </li>
-        <li><strong>Produtos</strong>
-            <ul>
-                <li><code>GET /products</code> - Obtém todos os produtos com paginação.</li>
-                <li><code>GET /products/{slug}</code> - Obtém um produto pelo slug.</li>
-            </ul>
-        </li>
-        <li><strong>Vouchers</strong>
-            <ul>
-                <li><code>GET /vouchers/{voucherNumber}</code> - Obtém um voucher pelo número.</li>
-            </ul>
-        </li>
-    </ul>
-<hr/>
+        <li><strong>API</strong></li>
+        <li><strong>Application</strong></li>
+        <li><strong>Domain</strong></li>
+        <li><strong>Infrastructure</strong></li>
+     
 
-   <h3 align="center">Camada Domain</h3>
-    <p align="center">
-        Esta camada contém a lógica de negócio e as entidades.
-    </p>
-
-  <h4>Entidades</h4>
+   </ul>
+    
+  ![image](https://github.com/user-attachments/assets/e99cd144-3eb8-4359-9a2d-b3ac3fd826fd)
+   <h2>Padrões e Tecnologias</h2>
+    <p>Os seguintes padrões e tecnologias foram adotados para o desenvolvimento da API:</p>
     <ul>
-        <li>Order</li>
-        <li>Product</li>
-        <li>Voucher</li>
+        <li><strong>CQRS e MediatR</strong> para manipulação de comandos e consultas.</li>
+        <li><strong>Minimal APIs</strong> para otimização de desempenho.</li>
+        <li>Desenvolvido em <strong>.NET</strong> com banco de dados <strong>SQL Server</strong> e <strong>Entity Framework</strong> como ORM.</li>
+        <li>Integração assíncrona com <strong>RabbitMQ</strong> para comunicação entre serviços.</li>
+        <li>Integração com <strong>Stripe</strong> para processar pagamentos e criar sessões de checkout.</li>
     </ul>
 
-  <h4>Outros Componentes</h4>
-    <ul>
-        <li>Enums</li>
-        <li>Interfaces
-            <ul>
-                <li>Interfaces de Services, ExternalServices e Repositories</li>
-            </ul>
-        </li>
-        <li>Requests</li>
-        <li>Responses</li>
-        <li>Services
-            <ul>
-                <li>Implementações dos serviços</li>
-            </ul>
-        </li>
-    </ul>
-<hr/>
-  <h3 align="center">Camada Infrastructure</h3>
-    <p align="center">
-        Esta camada lida com a comunicação externa e a persistência de dados.
-    </p>
+   <h2>Endpoints</h2>
+ 
+ ![image](https://github.com/user-attachments/assets/746983b4-0f93-4d10-8220-1c7d77ee97d3)
 
-  <h4>Componentes</h4>
+   
+   <h3>Orders</h3>
     <ul>
-        <li><strong>ExternalServices</strong>
-            <ul>
-                <li><code>StripeService</code>: Serviço para interação com a API do Stripe.</li>
-            </ul>
-        </li>
-        <li><strong>Models</strong>
-            <ul>
-                <li><code>StripeConfigurationSettings</code>: Configurações necessárias para a integração com o Stripe.</li>
-            </ul>
-        </li>
-        <li><strong>Persistence</strong>
-            <ul>
-                <li>Mapeamento do banco de dados.</li>
-                <li>Implementação de Repositories.</li>
-                <li>Migrações do banco de dados.</li>
-            </ul>
-        </li>
-        <li><strong>DbContext</strong>
-            <ul>
-                <li>Contexto do Entity Framework para a persistência de dados.</li>
-            </ul>
-        </li>
+        <li><strong>POST /api/v1/orders/{id}/cancel</strong>: Cancela um pedido com o <code>id</code> especificado.</li>
+        <li><strong>POST /api/v1/orders</strong>: Cria um novo pedido.</li>
+        <pre>
+{
+  "productId": 0,
+  "voucherId": 0
+}
+        </pre>
+        <li><strong>GET /api/v1/orders</strong>: Retorna uma lista paginada de pedidos. Requer <code>pageSize</code> e <code>pageNumber</code> como parâmetros.</li>
+        <li><strong>GET /api/v1/orders/{number}</strong>: Consulta um pedido específico pelo <code>number</code> do pedido.</li>
+        <li><strong>POST /api/v1/orders/{number}/pay</strong>: Realiza o pagamento de um pedido específico.</li>
+        <li><strong>POST /api/v1/orders/{id}/refund</strong>: Solicita o reembolso de um pedido específico.</li>
     </ul>
 
-  <h1>Arquitetura e Fluxograma</h1>
+   <h3>Payments</h3>
+    <ul>
+        <li><strong>GET /api/v1/payments/{number}/transactions</strong>: Consulta transações relacionadas a um pedido específico.</li>
+        <li><strong>POST /api/v1/payments/session</strong>: Cria uma sessão de pagamento no Stripe.</li>
+        <pre>
+{
+  "orderNumber": "string",
+  "productTitle": "string",
+  "productDescription": "string",
+  "orderTotal": 0
+}
+        </pre>
+    </ul>
 
-          
-  ![AYc3o9il0nNSAAAAAElFTkSuQmCC](https://github.com/user-attachments/assets/de2bff55-b337-4dab-9f2d-9effa6281351)
-  
-  
-   ![Fluxograma Pedido Online Amarelo Marrom](https://github.com/user-attachments/assets/6a537f55-6c90-4617-b8d6-ee41df37d44f)
+   <h3>Products</h3>
+    <ul>
+        <li><strong>GET /api/v1/products</strong>: Retorna uma lista paginada de produtos. Requer <code>pageSize</code> e <code>pageNumber</code> como parâmetros.</li>
+        <li><strong>GET /api/v1/products/{slug}</strong>: Consulta um produto específico pelo <code>slug</code>.</li>
+    </ul>
+
+   <h3>Vouchers</h3>
+    <ul>
+        <li><strong>GET /api/v1/vouchers/{number}</strong>: Consulta informações de um voucher específico pelo <code>number</code>.</li>
+    </ul>
+</body>
