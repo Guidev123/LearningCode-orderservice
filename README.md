@@ -1,58 +1,56 @@
 <body>
-    <h1>Learning Code - API de Orders 🛒</h1>
+    <h1>Learning Code - Orders API 🛒</h1>
 
-   <p>Esta API faz parte do microsserviço <strong>Learning Code</strong>, um software de e-learning. Ela é responsável pelas operações de pedidos de produtos e assinaturas, integrando-se com o <strong>gateway de pagamento Stripe</strong> para criar sessões de checkout. Quando o usuário compra uma assinatura e o pagamento é confirmado no Stripe, a API de pedidos envia uma mensagem via <strong>RabbitMQ</strong> para a API de usuários, solicitando a atualização da <code>Role</code> do usuário.</p>
+ <p>This API is part of the <strong>Learning Code</strong> microservice, an e-learning software. It is responsible for product and subscription order operations, integrating with the <strong>Stripe payment gateway</strong> to create checkout sessions. When a user purchases a subscription and the payment is confirmed on Stripe, the orders API sends a message via <strong>RabbitMQ</strong> to the users API, requesting an update to the user's <code>Role</code>.</p>
 
-   <h2>Segurança 👮‍♂️</h2>
-    <p>A segurança foi uma prioridade máxima no desenvolvimento desta API. Utilizamos as melhores práticas de segurança, incluindo a autenticação via <strong>JWT</strong> para garantir que apenas usuários autenticados possam acessar os endpoints.</p>
+ <h2>Security 👮‍♂️</h2>
+    <p>Security was a top priority in the development of this API. We used best security practices, including authentication via <strong>JWT</strong> to ensure that only authenticated users can access the endpoints.</p>
 
-   <h2>Arquitetura</h2>
-    <p>A arquitetura da API foi projetada seguindo rigorosamente a <strong>Arquitetura Cebola (Onion Architecture)</strong>, com as camadas:</p>
-    <ul>
+ <h2>Architecture</h2>
+ <p>The API architecture was designed by strictly following the <strong>Onion Architecture</strong>, with the following layers:</p>
+ <ul>
         <li><strong>API</strong></li>
         <li><strong>Application</strong></li>
         <li><strong>Domain</strong></li>
         <li><strong>Infrastructure</strong></li>
-     
-
-   </ul>
+ </ul>
     
-  ![image](https://github.com/user-attachments/assets/e99cd144-3eb8-4359-9a2d-b3ac3fd826fd)
-   <h2>Padrões e Tecnologias</h2>
-    <p>Os seguintes padrões e tecnologias foram adotados para o desenvolvimento da API:</p>
-    <ul>
-        <li><strong>CQRS e MediatR</strong> para manipulação de comandos e consultas.</li>
-        <li><strong>Minimal APIs</strong> para otimização de desempenho.</li>
-        <li>Desenvolvido em <strong>.NET</strong> com banco de dados <strong>SQL Server</strong> e <strong>Entity Framework</strong> como ORM.</li>
-        <li>Integração assíncrona com <strong>RabbitMQ</strong> para comunicação entre serviços.</li>
-        <li>Integração com <strong>Stripe</strong> para processar pagamentos e criar sessões de checkout.</li>
-    </ul>
+<img src="https://github.com/user-attachments/assets/e99cd144-3eb8-4359-9a2d-b3ac3fd826fd" alt="API Architecture">
+    
+<h2>Patterns and Technologies</h2>
+ <p>The following patterns and technologies were adopted for the development of the API:</p>
+ <ul>
+        <li><strong>CQRS and MediatR</strong> for command and query handling.</li>
+        <li><strong>Minimal APIs</strong> for performance optimization.</li>
+        <li>Developed in <strong>.NET</strong> with a <strong>SQL Server</strong> database and <strong>Entity Framework</strong> as ORM.</li>
+        <li>Asynchronous integration with <strong>RabbitMQ</strong> for communication between services.</li>
+        <li>Integration with <strong>Stripe</strong> to process payments and create checkout sessions.</li>
+ </ul>
 
    <h2>Endpoints</h2>
  
- ![image](https://github.com/user-attachments/assets/746983b4-0f93-4d10-8220-1c7d77ee97d3)
+ <img src="https://github.com/user-attachments/assets/746983b4-0f93-4d10-8220-1c7d77ee97d3" alt="API Endpoints">
 
-   
-   <h3>Orders</h3>
-    <ul>
-        <li><strong>POST /api/v1/orders/{id}/cancel</strong>: Cancela um pedido com o <code>id</code> especificado.</li>
-        <li><strong>POST /api/v1/orders</strong>: Cria um novo pedido.</li>
+ <h3>Orders</h3>
+  <ul>
+        <li><strong>POST /api/v1/orders/{id}/cancel</strong>: Cancels an order with the specified <code>id</code>.</li>
+        <li><strong>POST /api/v1/orders</strong>: Creates a new order.</li>
         <pre>
 {
   "productId": 0,
   "voucherId": 0
 }
         </pre>
-        <li><strong>GET /api/v1/orders</strong>: Retorna uma lista paginada de pedidos. Requer <code>pageSize</code> e <code>pageNumber</code> como parâmetros.</li>
-        <li><strong>GET /api/v1/orders/{number}</strong>: Consulta um pedido específico pelo <code>number</code> do pedido.</li>
-        <li><strong>POST /api/v1/orders/{number}/pay</strong>: Realiza o pagamento de um pedido específico.</li>
-        <li><strong>POST /api/v1/orders/{id}/refund</strong>: Solicita o reembolso de um pedido específico.</li>
+        <li><strong>GET /api/v1/orders</strong>: Returns a paginated list of orders. Requires <code>pageSize</code> and <code>pageNumber</code> as parameters.</li>
+        <li><strong>GET /api/v1/orders/{number}</strong>: Queries a specific order by its <code>number</code>.</li>
+        <li><strong>POST /api/v1/orders/{number}/pay</strong>: Processes the payment for a specific order.</li>
+        <li><strong>POST /api/v1/orders/{id}/refund</strong>: Requests a refund for a specific order.</li>
     </ul>
 
-   <h3>Payments</h3>
+ <h3>Payments</h3>
     <ul>
-        <li><strong>GET /api/v1/payments/{number}/transactions</strong>: Consulta transações relacionadas a um pedido específico.</li>
-        <li><strong>POST /api/v1/payments/session</strong>: Cria uma sessão de pagamento no Stripe.</li>
+        <li><strong>GET /api/v1/payments/{number}/transactions</strong>: Queries transactions related to a specific order.</li>
+        <li><strong>POST /api/v1/payments/session</strong>: Creates a payment session in Stripe.</li>
         <pre>
 {
   "orderNumber": "string",
@@ -63,14 +61,14 @@
         </pre>
     </ul>
 
-   <h3>Products</h3>
+<h3>Products</h3>
     <ul>
-        <li><strong>GET /api/v1/products</strong>: Retorna uma lista paginada de produtos. Requer <code>pageSize</code> e <code>pageNumber</code> como parâmetros.</li>
-        <li><strong>GET /api/v1/products/{slug}</strong>: Consulta um produto específico pelo <code>slug</code>.</li>
+        <li><strong>GET /api/v1/products</strong>: Returns a paginated list of products. Requires <code>pageSize</code> and <code>pageNumber</code> as parameters.</li>
+        <li><strong>GET /api/v1/products/{slug}</strong>: Queries a specific product by its <code>slug</code>.</li>
     </ul>
 
-   <h3>Vouchers</h3>
+<h3>Vouchers</h3>
     <ul>
-        <li><strong>GET /api/v1/vouchers/{number}</strong>: Consulta informações de um voucher específico pelo <code>number</code>.</li>
+        <li><strong>GET /api/v1/vouchers/{number}</strong>: Queries information about a specific voucher by its <code>number</code>.</li>
     </ul>
 </body>
