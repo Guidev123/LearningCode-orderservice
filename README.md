@@ -3,6 +3,7 @@
 
  <p>This API is part of the <strong>Learning Code</strong> microservice, an e-learning software. It is responsible for product and subscription order operations, integrating with the <strong>Stripe payment gateway</strong> to create checkout sessions. When a user purchases a subscription and the payment is confirmed on Stripe, the orders API sends a message via <strong>RabbitMQ</strong> to the users API, requesting an update to the user's <code>Role</code>.</p>
 
+
  <h2>Security 👮‍♂️</h2>
     <p>Security was a top priority in the development of this API. We used best security practices, including authentication via <strong>JWT</strong> to ensure that only authenticated users can access the endpoints.</p>
 
