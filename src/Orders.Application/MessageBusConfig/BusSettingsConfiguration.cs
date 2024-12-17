@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Orders.Infrastructure.MessageBus.Configuration
+namespace Orders.Application.MessageBusConfig
 {
     public class BusSettingsConfiguration
     {

@@ -8,11 +8,14 @@ namespace Orders.Infrastructure.Data.Persistence.Repositories
     public class ProductRepository(OrdersDbContext context) : IProductRepository
     {
         private readonly OrdersDbContext _context = context;
-        public IOrderedQueryable<Product>? GetAllProducts(int pageNumber, int pageSize)
+        public async Task<List<Product>?> GetAllProducts(int pageNumber, int pageSize)
         {
+            var query = _context.Products.AsNoTracking()
+                                .OrderBy(x => x.Price);
 
-            return _context.Products.AsNoTracking().Where(x => x.IsActive)
-                                         .OrderBy(x => x.Title);
+            return await query.Skip((pageNumber - 1) * pageSize)
+                                    .Take(pageSize)
+                                    .ToListAsync();
 
         }
 

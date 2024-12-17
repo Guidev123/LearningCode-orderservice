@@ -1,12 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using RabbitMQ.Client;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RabbitMQ.Client;
 
-namespace Orders.Infrastructure.MessageBus.Configuration
+namespace Orders.Application.MessageBusConfig
 {
     public class ConnectionConfiguration
     {

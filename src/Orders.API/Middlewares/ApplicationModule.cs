@@ -2,12 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Orders.Application.Commands.CreateOrder;
+using Orders.Application.MessageBusConfig;
+using Orders.Application.Services;
 using Orders.Domain.Repositories;
 using Orders.Infrastructure.Data;
 using Orders.Infrastructure.Data.Persistence.Repositories;
 using Orders.Infrastructure.ExternalServices;
 using Orders.Infrastructure.ExternalServices.Configuration;
-using Orders.Infrastructure.MessageBus.Configuration;
+using Orders.Infrastructure.MessageBus;
 using System.Text;
 
 namespace Orders.API.Middlewares
@@ -30,6 +32,7 @@ namespace Orders.API.Middlewares
         private static void ResolveDependencies(this WebApplicationBuilder builder)
         {
             builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+            builder.Services.AddSingleton<IMessageBusService, RabbitMQService>();
             builder.Services.AddTransient<IVoucherRepository, VoucherRepository>();
             builder.Services.AddTransient<IProductRepository, ProductRepository>();
             builder.Services.AddTransient<IStripeService, StripeService>();

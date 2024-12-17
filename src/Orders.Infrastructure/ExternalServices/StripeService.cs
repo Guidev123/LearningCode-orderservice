@@ -1,6 +1,6 @@
-﻿using Azure;
-using Microsoft.Extensions.Options;
-using Orders.Infrastructure.DTOs;
+﻿using Microsoft.Extensions.Options;
+using Orders.Application.DTOs;
+using Orders.Application.Services;
 using Stripe;
 using Stripe.Checkout;
 

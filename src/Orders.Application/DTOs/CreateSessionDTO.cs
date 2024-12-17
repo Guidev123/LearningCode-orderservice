@@ -1,4 +1,4 @@
-﻿namespace Orders.Infrastructure.DTOs
+﻿namespace Orders.Application.DTOs
 {
     public class CreateSessionDTO
     {

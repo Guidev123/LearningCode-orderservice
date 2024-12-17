@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Orders.Application.Services;
 using RabbitMQ.Client;
 
-namespace Orders.Infrastructure.MessageBus.Configuration
+namespace Orders.Application.MessageBusConfig
 {
     public static class MessageBusConfiguration
     {
@@ -14,7 +15,6 @@ namespace Orders.Infrastructure.MessageBus.Configuration
 
             var connection = connectionFactory.CreateConnection(clientProvidedName);
             services.AddSingleton(new ConnectionConfiguration(connection));
-            services.AddSingleton<IMessageBusClient, RabbitMqClient>();
         }
     }
 }

@@ -1,25 +1,24 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
 using Orders.Application.DTOs;
+using Orders.Application.MessageBusConfig;
+using Orders.Application.Messages;
 using Orders.Application.Response;
 using Orders.Application.Response.Messages;
+using Orders.Application.Services;
 using Orders.Domain.Enums;
 using Orders.Domain.Repositories;
-using Orders.Infrastructure.ExternalServices;
-using Orders.Infrastructure.MessageBus;
-using Orders.Infrastructure.MessageBus.Configuration;
-using Orders.Infrastructure.MessageBus.Messages;
 
 namespace Orders.Application.Commands.PayOrder
 {
     public class PayOrderHandler(IOrderRepository orderRepository,
                                  IStripeService stripeService,
-                                 IMessageBusClient messageBusClient,
+                                 IMessageBusService messageBusClient,
                                  IOptions<BusSettingsConfiguration> busSettings)
                                : IRequestHandler<PayOrderCommand, Response<OrderDTO?>>
     {
         private readonly IStripeService _stripeService = stripeService;
-        private readonly IMessageBusClient _messageBusClient = messageBusClient;
+        private readonly IMessageBusService _messageBusClient = messageBusClient;
         private readonly IOrderRepository _orderRepository = orderRepository;
         private readonly BusSettingsConfiguration _busSettings = busSettings.Value;
 

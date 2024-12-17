@@ -1,6 +1,6 @@
-﻿using Orders.Infrastructure.DTOs;
+﻿using Orders.Application.DTOs;
 
-namespace Orders.Infrastructure.ExternalServices
+namespace Orders.Application.Services
 {
     public interface IStripeService
     {

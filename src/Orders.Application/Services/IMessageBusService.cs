@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Orders.Infrastructure.MessageBus
+namespace Orders.Application.Services
 {
-    public interface IMessageBusClient
+    public interface IMessageBusService
     {
         void Publish(object message, string routingKey, string exchange);
     }

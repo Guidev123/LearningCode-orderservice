@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Orders.Application.Response;
 using Orders.Application.Response.Messages;
-using Orders.Infrastructure.ExternalServices;
+using Orders.Application.Services;
 
 namespace Orders.Application.Commands.CreateSession
 {

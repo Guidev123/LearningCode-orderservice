@@ -1,12 +1,13 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using Orders.Infrastructure.MessageBus.Configuration;
+using Orders.Application.MessageBusConfig;
+using Orders.Application.Services;
 using RabbitMQ.Client;
 using System.Text;
 
 namespace Orders.Infrastructure.MessageBus
 {
-    public class RabbitMqClient(ConnectionConfiguration connection) : IMessageBusClient
+    public class RabbitMQService(ConnectionConfiguration connection) : IMessageBusService
     {
         private readonly IConnection _connection = connection.Connection;
         public void Publish(object message, string routingKey, string exchange)

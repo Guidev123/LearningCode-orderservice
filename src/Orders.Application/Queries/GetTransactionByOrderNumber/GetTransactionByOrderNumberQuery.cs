@@ -1,6 +1,6 @@
 ﻿using MediatR;
+using Orders.Application.DTOs;
 using Orders.Application.Response;
-using Orders.Infrastructure.DTOs;
 
 namespace Orders.Application.Queries.GetTransactionByOrderNumber
 {
