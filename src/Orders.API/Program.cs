@@ -1,5 +1,5 @@
+using Orders.API.Configurations;
 using Orders.API.Endpoint;
-using Orders.API.Middlewares;
 using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);

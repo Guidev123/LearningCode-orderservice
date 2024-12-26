@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace Orders.API.Middlewares
+namespace Orders.API.Configurations
 {
     public static class DocsConfiguration
     {

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Orders.API.Middlewares;
+using Orders.API.Configurations;
 using Orders.Application.DTOs;
 using Orders.Application.Queries.GetAllOrders;
 using Orders.Application.Response;

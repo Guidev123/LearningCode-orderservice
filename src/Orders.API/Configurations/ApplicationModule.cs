@@ -12,7 +12,7 @@ using Orders.Infrastructure.ExternalServices.Configuration;
 using Orders.Infrastructure.MessageBus;
 using System.Text;
 
-namespace Orders.API.Middlewares
+namespace Orders.API.Configurations
 {
     public static class ApplicationModule
     {
@@ -31,10 +31,10 @@ namespace Orders.API.Middlewares
 
         private static void ResolveDependencies(this WebApplicationBuilder builder)
         {
-            builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddSingleton<IMessageBusService, RabbitMQService>();
-            builder.Services.AddTransient<IVoucherRepository, VoucherRepository>();
-            builder.Services.AddTransient<IProductRepository, ProductRepository>();
+            builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddTransient<IStripeService, StripeService>();
             builder.Services.AddMediatR(config => config.RegisterServicesFromAssemblyContaining<CreateOrderCommand>());
             builder.Services.Configure<StripeConfiguration>(builder.Configuration.GetSection(nameof(StripeConfiguration)));
